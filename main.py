@@ -60,9 +60,12 @@ def main() -> None:
     telegram = TelegramBot(db=db)
     monitor = LiveMonitor(db=db, bankroll=bankroll, telegram=telegram)
 
-    # Dashboard em thread separada na porta 5000
-    start_in_thread(db=db, bankroll=bankroll, port=5000)
-    logger.info("Dashboard disponivel em http://localhost:5000")
+    # Dashboard só sobe localmente (não tem sentido no GitHub Actions)
+    if not os.getenv("GITHUB_ACTIONS"):
+        start_in_thread(db=db, bankroll=bankroll, port=5000)
+        logger.info("Dashboard disponivel em http://localhost:5000")
+    else:
+        logger.info("Rodando no GitHub Actions — dashboard desativado")
 
     telegram.test_connection()
     monitor.start()
