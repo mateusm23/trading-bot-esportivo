@@ -22,6 +22,7 @@ from core.bankroll import Bankroll
 from core.odds_client import OddsClient
 from core.filter_engine import analyze_match
 from core.live_monitor import LiveMonitor
+from core.scheduler import DailyScheduler
 from alerts.telegram_bot import TelegramBot
 from dashboard.app import start_in_thread
 
@@ -65,6 +66,13 @@ def main() -> None:
 
     telegram.test_connection()
     monitor.start()
+
+    scheduler = DailyScheduler(
+        odds_client=odds_client,
+        filter_engine_fn=analyze_match,
+        telegram=telegram,
+    )
+    scheduler.start()
 
     sport_keys = load_sport_keys()
     logger.info(f"Monitorando {len(sport_keys)} ligas")
