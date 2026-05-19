@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trading Bot</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: monospace; background: #0f0f0f; color: #e0e0e0; padding: 20px; }
+  h1 { color: #fff; margin-bottom: 20px; font-size: 1.2rem; letter-spacing: 2px; }
+  h2 { color: #aaa; font-size: 0.85rem; letter-spacing: 1px; margin-bottom: 10px; text-transform: uppercase; }
+
+  .cards { display: flex; gap: 12px; margin-bottom: 28px; flex-wrap: wrap; }
+  .card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 6px; padding: 16px 20px; min-width: 160px; flex: 1; }
+  .card .label { font-size: 0.7rem; color: #777; margin-bottom: 4px; text-transform: uppercase; }
+  .card .value { font-size: 1.4rem; font-weight: bold; }
+  .card .value.verde { color: #4caf50; }
+  .card .value.vermelho { color: #f44336; }
+  .card .value.branco { color: #fff; }
+  .card .value.amarelo { color: #ffb300; }
+
+  .section { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 6px; padding: 16px; margin-bottom: 20px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+  th { color: #777; font-weight: normal; text-align: left; padding: 6px 8px; border-bottom: 1px solid #2a2a2a; }
+  td { padding: 7px 8px; border-bottom: 1px solid #1e1e1e; }
+  tr:last-child td { border-bottom: none; }
+  .win  { color: #4caf50; font-weight: bold; }
+  .loss { color: #f44336; font-weight: bold; }
+  .open { color: #90a4ae; }
+  .empty { color: #555; font-size: 0.75rem; }
+
+  canvas { width: 100% !important; max-height: 180px; }
+
+  .stop-banner { background: #b71c1c; color: #fff; padding: 10px 16px; border-radius: 6px;
+                 margin-bottom: 20px; font-weight: bold; text-align: center; display: none; }
+  .atualizado { color: #555; font-size: 0.7rem; margin-top: 16px; text-align: right; }
+</style>
+</head>
+<body>
+
+<h1>TRADING BOT &mdash; DASHBOARD</h1>
+<div class="stop-banner" id="stopBanner">STOP DIARIO ATIVADO &mdash; NENHUM NOVO TRADE HOJE</div>
+
+<div class="cards">
+  <div class="card">
+    <div class="label">Banca atual</div>
+    <div class="value branco" id="bancaAtual">—</div>
+  </div>
+  <div class="card">
+    <div class="label">P&amp;L do dia</div>
+    <div class="value" id="pnlDia">—</div>
+  </div>
+  <div class="card">
+    <div class="label">Win rate</div>
+    <div class="value branco" id="winRate">—</div>
+  </div>
+  <div class="card">
+    <div class="label">Trades ativos</div>
+    <div class="value amarelo" id="tradesAtivos">—</div>
+  </div>
+  <div class="card">
+    <div class="label">Trades hoje</div>
+    <div class="value branco" id="tradesHoje">—</div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Trades ativos agora</h2>
+  <table>
+    <thead>
+      <tr><th>Jogo</th><th>Favorito</th><th>Odd entrada</th><th>Stake</th><th>Liga</th></tr>
+    </thead>
+    <tbody id="tabelaAtivos"><tr><td colspan="5" class="empty">Nenhum trade ativo</td></tr></tbody>
+  </table>
+</div>
+
+<div class="section">
+  <h2>Historico recente (ultimos 20 trades)</h2>
+  <table>
+    <thead>
+      <tr><th>Data</th><th>Jogo</th><th>Favorito</th><th>Odd entrada</th><th>Odd saida</th><th>P&amp;L</th><th>Resultado</th></tr>
+    </thead>
+    <tbody id="tabelaHistorico"><tr><td colspan="7" class="empty">Sem trades registrados</td></tr></tbody>
+  </table>
+</div>
+
+<div class="section">
+  <h2>Banca &mdash; ultimos 30 dias</h2>
+  <canvas id="grafico"></canvas>
+</div>
+
+<div class="atualizado" id="atualizadoEm"></div>
+
+<script>
+const fmt = (v, prefix='R$') => v != null ? `${prefix}${parseFloat(v).toFixed(2)}` : '—';
+const pct = v => v != null ? `${parseFloat(v).toFixed(1)}%` : '—';
+
+async function carregar() {
+  try {
+    const [resumo, ativos, recentes, grafico] = await Promise.all([
+      fetch('/api/resumo').then(r => r.json()),
+      fetch('/api/trades/ativos').then(r => r.json()),
+      fetch('/api/trades/recentes').then(r => r.json()),
+      fetch('/api/grafico').then(r => r.json()),
+    ]);
+
+    // Cards
+    document.getElementById('bancaAtual').textContent = fmt(resumo.banca_atual);
+    const pnl = resumo.pnl_dia ?? 0;
+    const pnlEl = document.getElementById('pnlDia');
+    pnlEl.textContent = (pnl >= 0 ? '+' : '') + fmt(pnl);
+    pnlEl.className = 'value ' + (pnl >= 0 ? 'verde' : 'vermelho');
+    document.getElementById('winRate').textContent = pct(resumo.win_rate);
+    document.getElementById('tradesAtivos').textContent = resumo.trades_ativos ?? 0;
+    document.getElementById('tradesHoje').textContent =
+      `${resumo.trades_win ?? 0}W / ${resumo.trades_loss ?? 0}L`;
+
+    if (resumo.stop_ativo) {
+      document.getElementById('stopBanner').style.display = 'block';
+    }
+
+    // Tabela ativos
+    const tbAtivos = document.getElementById('tabelaAtivos');
+    if (ativos.length === 0) {
+      tbAtivos.innerHTML = '<tr><td colspan="5" class="empty">Nenhum trade ativo</td></tr>';
+    } else {
+      tbAtivos.innerHTML = ativos.map(t => `
+        <tr>
+          <td>${t.jogo}</td>
+          <td>${t.favorito}</td>
+          <td>${t.odd_entrada}</td>
+          <td>${fmt(t.stake_reais)}</td>
+          <td>${t.liga}</td>
+        </tr>`).join('');
+    }
+
+    // Tabela histórico
+    const tbHist = document.getElementById('tabelaHistorico');
+    if (recentes.length === 0) {
+      tbHist.innerHTML = '<tr><td colspan="7" class="empty">Sem trades registrados</td></tr>';
+    } else {
+      tbHist.innerHTML = recentes.map(t => {
+        const resClass = t.resultado === 'WIN' ? 'win' : t.resultado === 'LOSS' ? 'loss' : 'open';
+        const pnlStr = t.pnl_reais != null
+          ? `<span class="${resClass}">${t.pnl_reais >= 0 ? '+' : ''}R$${parseFloat(t.pnl_reais).toFixed(2)}</span>`
+          : '—';
+        const data = t.created_at ? t.created_at.substring(0, 16).replace('T', ' ') : '';
+        return `<tr>
+          <td>${data}</td>
+          <td>${t.jogo}</td>
+          <td>${t.favorito}</td>
+          <td>${t.odd_entrada}</td>
+          <td>${t.odd_saida ?? '—'}</td>
+          <td>${pnlStr}</td>
+          <td class="${resClass}">${t.resultado ?? 'ABERTO'}</td>
+        </tr>`;
+      }).join('');
+    }
+
+    // Gráfico de banca
+    desenharGrafico(grafico);
+
+    document.getElementById('atualizadoEm').textContent =
+      'Atualizado: ' + new Date().toLocaleTimeString('pt-BR');
+  } catch (e) {
+    console.error('Erro ao carregar dados:', e);
+  }
+}
+
+function desenharGrafico(dados) {
+  const canvas = document.getElementById('grafico');
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth || 800;
+  canvas.height = 180;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  if (!dados || dados.length < 2) {
+    ctx.fillStyle = '#555';
+    ctx.font = '12px monospace';
+    ctx.fillText('Dados insuficientes para o grafico', 20, 90);
+    return;
+  }
+
+  const valores = dados.map(d => d.banca_fim || d.banca_inicio || 0);
+  const labels = dados.map(d => d.data ? d.data.substring(5) : '');
+  const min = Math.min(...valores) * 0.98;
+  const max = Math.max(...valores) * 1.02;
+  const W = canvas.width, H = canvas.height;
+  const pad = { t: 10, b: 24, l: 10, r: 10 };
+  const w = W - pad.l - pad.r, h = H - pad.t - pad.b;
+
+  const xPos = i => pad.l + (i / (valores.length - 1)) * w;
+  const yPos = v => pad.t + h - ((v - min) / (max - min)) * h;
+
+  ctx.strokeStyle = '#2a2a2a';
+  ctx.lineWidth = 1;
+  [0.25, 0.5, 0.75, 1].forEach(f => {
+    const y = pad.t + h * f;
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(W - pad.r, y); ctx.stroke();
+  });
+
+  ctx.beginPath();
+  ctx.strokeStyle = '#4caf50';
+  ctx.lineWidth = 2;
+  valores.forEach((v, i) => {
+    i === 0 ? ctx.moveTo(xPos(i), yPos(v)) : ctx.lineTo(xPos(i), yPos(v));
+  });
+  ctx.stroke();
+
+  ctx.fillStyle = 'rgba(76,175,80,0.08)';
+  ctx.beginPath();
+  ctx.moveTo(xPos(0), yPos(valores[0]));
+  valores.forEach((v, i) => ctx.lineTo(xPos(i), yPos(v)));
+  ctx.lineTo(xPos(valores.length - 1), H - pad.b);
+  ctx.lineTo(xPos(0), H - pad.b);
+  ctx.closePath(); ctx.fill();
+
+  ctx.fillStyle = '#555';
+  ctx.font = '9px monospace';
+  ctx.textAlign = 'center';
+  const step = Math.max(1, Math.floor(labels.length / 8));
+  labels.forEach((l, i) => {
+    if (i % step === 0) ctx.fillText(l, xPos(i), H - 6);
+  });
+}
+
+carregar();
+setInterval(carregar, 30000);
+</script>
+</body>
+</html>

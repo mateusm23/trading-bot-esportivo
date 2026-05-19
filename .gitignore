@@ -1,0 +1,25 @@
+# Credenciais — NUNCA subir para o repositório
+.env
+certs/
+
+# Banco de dados local
+data/trading.db
+
+# Logs
+logs/*.log
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

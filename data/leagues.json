@@ -1,0 +1,89 @@
+{
+  "leagues": [
+    {
+      "name": "Premier League",
+      "country": "England",
+      "odds_api_key": "soccer_epl",
+      "football_data_code": "PL",
+      "api_football_id": 39,
+      "active": true
+    },
+    {
+      "name": "La Liga",
+      "country": "Spain",
+      "odds_api_key": "soccer_spain_la_liga",
+      "football_data_code": "PD",
+      "api_football_id": 140,
+      "active": true
+    },
+    {
+      "name": "Serie A",
+      "country": "Italy",
+      "odds_api_key": "soccer_italy_serie_a",
+      "football_data_code": "SA",
+      "api_football_id": 135,
+      "active": true
+    },
+    {
+      "name": "Bundesliga",
+      "country": "Germany",
+      "odds_api_key": "soccer_germany_bundesliga",
+      "football_data_code": "BL1",
+      "api_football_id": 78,
+      "active": true
+    },
+    {
+      "name": "Ligue 1",
+      "country": "France",
+      "odds_api_key": "soccer_france_ligue_one",
+      "football_data_code": "FL1",
+      "api_football_id": 61,
+      "active": true
+    },
+    {
+      "name": "Brasileirão Série A",
+      "country": "Brazil",
+      "odds_api_key": "soccer_brazil_campeonato",
+      "football_data_code": "BSA",
+      "api_football_id": 71,
+      "active": true
+    },
+    {
+      "name": "Champions League",
+      "country": "Europe",
+      "odds_api_key": "soccer_uefa_champs_league",
+      "football_data_code": "CL",
+      "api_football_id": 2,
+      "active": true
+    },
+    {
+      "name": "Europa League",
+      "country": "Europe",
+      "odds_api_key": "soccer_uefa_europa_league",
+      "football_data_code": "EL",
+      "api_football_id": 3,
+      "active": true
+    },
+    {
+      "name": "Copa Libertadores",
+      "country": "South America",
+      "odds_api_key": "soccer_conmebol_libertadores",
+      "football_data_code": "CLI",
+      "api_football_id": 13,
+      "active": true
+    },
+    {
+      "name": "MLS",
+      "country": "USA",
+      "odds_api_key": "soccer_usa_mls",
+      "football_data_code": "MLS",
+      "api_football_id": 253,
+      "active": true
+    }
+  ],
+  "sources": {
+    "odds": "https://api.the-odds-api.com/v4/sports/{odds_api_key}/odds/",
+    "form": "https://api.football-data.org/v4/competitions/{football_data_code}/matches",
+    "live": "https://v3.football.api-sports.io/fixtures?live=all&league={api_football_id}"
+  }
+}
