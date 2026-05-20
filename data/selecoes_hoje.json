@@ -1,24 +1,5 @@
 {
   "data": "2026-05-19",
-  "total_jogos": 7,
-  "selecoes": [
-    {
-      "market_id": "d566fa92d9b22f304f4b070e60be65bd",
-      "event": "Flamengo-RJ vs Estudiantes La Plata",
-      "competition": "Copa Libertadores",
-      "sport_key": "soccer_conmebol_copa_libertadores",
-      "start_time": "2026-05-21T00:30:00Z",
-      "home_team": "Flamengo-RJ",
-      "away_team": "Estudiantes La Plata",
-      "favorito": "Flamengo-RJ",
-      "odd_favorito": 1.402,
-      "odd_empate": 4.178,
-      "odd_zebra": 7.989,
-      "num_bookmakers": 20,
-      "score": 75,
-      "motivo": "Score 75/100 | 0/5 vitórias | 20 casas",
-      "form_vitorias": 0,
-      "form_media_gols_sofridos": 0.0
-    }
-  ]
+  "total_jogos": 2,
+  "selecoes": []
 }

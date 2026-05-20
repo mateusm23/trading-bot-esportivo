@@ -4,6 +4,7 @@ import os
 import subprocess
 import sys
 import threading
+from datetime import datetime, timezone, timedelta
 from flask import Flask, jsonify, render_template, request
 
 from core.database import Database
@@ -13,30 +14,37 @@ app = Flask(__name__)
 
 _db: Database = None
 _bankroll: Bankroll = None
+_banca_inicial: float = 1000.0
 _scan_running = False
 _scan_lock = threading.Lock()
 
-DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
+DATA_DIR      = os.path.join(os.path.dirname(__file__), "..", "data")
 SELECOES_PATH = os.path.join(DATA_DIR, "selecoes_hoje.json")
 HISTORICO_PATH = os.path.join(DATA_DIR, "historico.csv")
-GRADE_PATH     = os.path.join(DATA_DIR, "grade_completa.json")
-QUOTA_PATH     = os.path.join(DATA_DIR, "api_quota.json")
+GRADE_PATH    = os.path.join(DATA_DIR, "grade_completa.json")
+QUOTA_PATH    = os.path.join(DATA_DIR, "api_quota.json")
 
 
-def init_dashboard(db: Database, bankroll: Bankroll) -> None:
-    global _db, _bankroll
+def init_dashboard(db: Database, bankroll: Bankroll, banca_inicial: float = 1000.0) -> None:
+    global _db, _bankroll, _banca_inicial
     _db = db
     _bankroll = bankroll
+    _banca_inicial = banca_inicial
 
 
-def start_in_thread(db: Database, bankroll: Bankroll, port: int = 5000) -> threading.Thread:
-    init_dashboard(db, bankroll)
+def start_in_thread(db: Database, bankroll: Bankroll, port: int = 5000,
+                    banca_inicial: float = 1000.0) -> threading.Thread:
+    init_dashboard(db, bankroll, banca_inicial)
     t = threading.Thread(
         target=lambda: app.run(host="0.0.0.0", port=port, debug=False, use_reloader=False),
         daemon=True,
     )
     t.start()
     return t
+
+
+def _hoje_brt() -> str:
+    return (datetime.now(timezone.utc) - timedelta(hours=3)).strftime("%Y-%m-%d")
 
 
 # ------------------------------------------------------------------
@@ -49,7 +57,7 @@ def index():
 
 
 # ------------------------------------------------------------------
-# Dados do dia
+# Dados do dia / grade
 # ------------------------------------------------------------------
 
 @app.route("/api/selecoes_hoje")
@@ -92,7 +100,7 @@ def api_historico():
 @app.route("/api/quota")
 def api_quota():
     if not os.path.exists(QUOTA_PATH):
-        return jsonify({"status": "UNKNOWN", "requests_remaining": None})
+        return jsonify({"status": "UNKNOWN"})
     try:
         with open(QUOTA_PATH, encoding="utf-8") as f:
             return jsonify(json.load(f))
@@ -109,22 +117,20 @@ def api_scan():
     global _scan_running
     with _scan_lock:
         if _scan_running:
-            return jsonify({"status": "already_running", "message": "Scan ja em execucao. Aguarde."})
+            return jsonify({"status": "already_running", "message": "Scan ja em execucao."})
         _scan_running = True
 
     def _run():
         global _scan_running
         try:
-            script = os.path.abspath(
-                os.path.join(os.path.dirname(__file__), "..", "scripts", "morning_scan.py")
-            )
+            script = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "scripts", "morning_scan.py"))
             root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
             subprocess.run([sys.executable, script], cwd=root)
         finally:
             _scan_running = False
 
     threading.Thread(target=_run, daemon=True).start()
-    return jsonify({"status": "started", "message": "Scan iniciado. Aguarde ~60 segundos e atualize a pagina."})
+    return jsonify({"status": "started", "message": "Scan iniciado. Aguarde ~60 segundos."})
 
 
 @app.route("/api/scan_status")
@@ -133,7 +139,86 @@ def api_scan_status():
 
 
 # ------------------------------------------------------------------
-# Trades (banco de dados local)
+# Gestão de Banca — Apostas
+# ------------------------------------------------------------------
+
+@app.route("/api/bets", methods=["GET"])
+def api_get_bets():
+    if not _db:
+        return jsonify([])
+    data = request.args.get("data")
+    bets = _db.get_bets(data_jogo=data)
+    return jsonify(bets)
+
+
+@app.route("/api/bets", methods=["POST"])
+def api_post_bet():
+    if not _db:
+        return jsonify({"erro": "DB nao inicializado"}), 500
+    body = request.json or {}
+    try:
+        trade_id = _db.registrar_aposta(body)
+        return jsonify({"id": trade_id, "status": "ok"})
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 400
+
+
+@app.route("/api/bets/<int:bet_id>", methods=["PUT"])
+def api_put_bet(bet_id: int):
+    if not _db:
+        return jsonify({"erro": "DB nao inicializado"}), 500
+    body = request.json or {}
+    resultado = body.get("resultado")
+    if resultado not in ("WIN", "LOSS", "VOID"):
+        return jsonify({"erro": "resultado invalido"}), 400
+    result = _db.atualizar_resultado_aposta(bet_id, resultado)
+    return jsonify(result)
+
+
+@app.route("/api/bets/<int:bet_id>", methods=["DELETE"])
+def api_delete_bet(bet_id: int):
+    if not _db:
+        return jsonify({"erro": "DB nao inicializado"}), 500
+    _db.deletar_aposta(bet_id)
+    return jsonify({"status": "ok"})
+
+
+@app.route("/api/bets/registrados_hoje")
+def api_registrados_hoje():
+    if not _db:
+        return jsonify([])
+    hoje = _hoje_brt()
+    market_ids = list(_db.get_market_ids_registrados(hoje))
+    return jsonify(market_ids)
+
+
+# ------------------------------------------------------------------
+# Gestão de Banca — Estatísticas
+# ------------------------------------------------------------------
+
+@app.route("/api/bankroll")
+def api_bankroll():
+    if not _db:
+        return jsonify({})
+    return jsonify(_db.get_bankroll_stats(_banca_inicial))
+
+
+@app.route("/api/bankroll/curve")
+def api_bankroll_curve():
+    if not _db:
+        return jsonify([])
+    return jsonify(_db.get_banca_curve(_banca_inicial))
+
+
+@app.route("/api/bankroll/por_liga")
+def api_bankroll_por_liga():
+    if not _db:
+        return jsonify([])
+    return jsonify(_db.get_stats_por_liga())
+
+
+# ------------------------------------------------------------------
+# Legado
 # ------------------------------------------------------------------
 
 @app.route("/api/resumo")
@@ -141,17 +226,3 @@ def api_resumo():
     if not _bankroll:
         return jsonify({})
     return jsonify(_bankroll.exportar_resumo_dia())
-
-
-@app.route("/api/trades/ativos")
-def api_trades_ativos():
-    if not _db:
-        return jsonify([])
-    return jsonify(_db.get_active_trades())
-
-
-@app.route("/api/trades/recentes")
-def api_trades_recentes():
-    if not _db:
-        return jsonify([])
-    return jsonify(_db.get_recent_trades(limit=20))

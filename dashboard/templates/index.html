@@ -10,118 +10,143 @@
     body{font-family:'Segoe UI',system-ui,sans-serif;background:#0f1117;color:#e2e8f0;min-height:100vh}
 
     /* HEADER */
-    header{background:#1a1d27;border-bottom:1px solid #2d3148;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px}
-    header h1{font-size:1.1rem;font-weight:700;color:#fff;white-space:nowrap}
+    header{background:#1a1d27;border-bottom:1px solid #2d3148;padding:13px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+    header h1{font-size:1.1rem;font-weight:700;color:#fff}
     .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#22c55e;margin-right:7px;animation:pulse 2s infinite}
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
     #data-hora{font-size:.82rem;color:#64748b}
 
-    /* NAV TABS */
-    nav{background:#13151f;border-bottom:1px solid #2d3148;display:flex;gap:0;padding:0 28px}
-    nav button{background:none;border:none;color:#64748b;padding:13px 20px;font-size:.88rem;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap}
+    /* NAV */
+    nav{background:#13151f;border-bottom:1px solid #2d3148;display:flex;padding:0 28px;overflow-x:auto}
+    nav button{background:none;border:none;color:#64748b;padding:13px 18px;font-size:.875rem;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap}
     nav button:hover{color:#cbd5e1}
     nav button.active{color:#60a5fa;border-bottom-color:#60a5fa;font-weight:600}
 
-    /* CONTEUDO */
-    .tab-content{display:none;padding:24px 28px;max-width:1280px;margin:0 auto}
+    .tab-content{display:none;padding:22px 28px;max-width:1300px;margin:0 auto}
     .tab-content.active{display:block}
 
     /* CARDS */
-    .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:24px}
-    .card{background:#1a1d27;border:1px solid #2d3148;border-radius:10px;padding:18px}
-    .card .lbl{font-size:.75rem;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
-    .card .val{font-size:1.7rem;font-weight:700;color:#fff}
-    .card .val.g{color:#22c55e}.card .val.r{color:#ef4444}.card .val.b{color:#60a5fa}
-    .card .sub{font-size:.75rem;color:#475569;margin-top:4px}
+    .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:13px;margin-bottom:22px}
+    .card{background:#1a1d27;border:1px solid #2d3148;border-radius:10px;padding:16px}
+    .card .lbl{font-size:.72rem;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+    .card .val{font-size:1.6rem;font-weight:700;color:#fff;line-height:1.1}
+    .card .sub{font-size:.73rem;color:#475569;margin-top:3px}
+    .g{color:#22c55e!important}.r{color:#ef4444!important}.b{color:#60a5fa!important}.y{color:#f59e0b!important}
 
-    /* SECOES */
+    /* SECTIONS */
     section{background:#1a1d27;border:1px solid #2d3148;border-radius:10px;margin-bottom:20px;overflow:hidden}
-    section h2{font-size:.9rem;font-weight:600;padding:14px 18px;border-bottom:1px solid #2d3148;color:#cbd5e1;display:flex;align-items:center;justify-content:space-between}
+    section h2{font-size:.9rem;font-weight:600;padding:13px 18px;border-bottom:1px solid #2d3148;color:#cbd5e1;display:flex;align-items:center;justify-content:space-between;gap:12px}
 
-    /* TABELAS */
-    table{width:100%;border-collapse:collapse;font-size:.85rem}
-    thead th{text-align:left;padding:9px 18px;background:#13151f;color:#64748b;font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.4px}
+    /* TABLES */
+    table{width:100%;border-collapse:collapse;font-size:.84rem}
+    thead th{text-align:left;padding:9px 16px;background:#13151f;color:#64748b;font-weight:600;font-size:.73rem;text-transform:uppercase;letter-spacing:.4px}
     tbody tr{border-top:1px solid #1e2235;transition:background .15s}
     tbody tr:hover{background:#1e2235}
-    tbody td{padding:11px 18px;color:#cbd5e1;vertical-align:middle}
+    tbody td{padding:10px 16px;color:#cbd5e1;vertical-align:middle}
 
     /* BADGES */
-    .badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:.72rem;font-weight:700;letter-spacing:.3px}
-    .badge.sel{background:#1e3a5f;color:#60a5fa;border:1px solid #2d5a8e}
+    .badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:.71rem;font-weight:700}
     .badge.win{background:#14532d;color:#4ade80}
     .badge.loss{background:#450a0a;color:#f87171}
-    .badge.pend{background:#1e293b;color:#94a3b8}
-    .badge.warn{background:#451a03;color:#fb923c}
-    .badge.ok{background:#14532d;color:#4ade80}
-    .badge.crit{background:#450a0a;color:#f87171}
+    .badge.pend{background:#1e3a5f;color:#93c5fd}
+    .badge.void{background:#1e2235;color:#94a3b8}
+    .badge.naoapostou{background:#1c1917;color:#78716c}
+    .badge.sel{background:#1e3a5f;color:#60a5fa;border:1px solid #2d5a8e}
 
     /* SCORE BAR */
     .sbar{display:flex;align-items:center;gap:7px}
-    .sbar .bar{flex:1;height:5px;background:#2d3148;border-radius:3px;overflow:hidden;min-width:60px}
+    .sbar .bar{flex:1;height:5px;background:#2d3148;border-radius:3px;overflow:hidden;min-width:50px}
     .sbar .fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#3b82f6,#22c55e)}
 
-    .empty{padding:36px 18px;text-align:center;color:#475569;font-size:.88rem}
-    .sub-txt{color:#64748b;font-size:.78rem}
+    .empty{padding:36px 16px;text-align:center;color:#475569;font-size:.88rem}
+    .sub-txt{color:#64748b;font-size:.76rem}
     .chart-wrap{padding:18px;height:260px}
 
-    /* ── GRADE SOFASCORE ── */
+    /* BUTTONS */
+    .btn{display:inline-flex;align-items:center;gap:5px;border:none;border-radius:6px;padding:7px 14px;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .18s}
+    .btn-primary{background:#3b82f6;color:#fff}.btn-primary:hover{background:#2563eb}
+    .btn-success{background:#16a34a;color:#fff}.btn-success:hover{background:#15803d}
+    .btn-danger{background:#dc2626;color:#fff}.btn-danger:hover{background:#b91c1c}
+    .btn-ghost{background:#1e2235;color:#94a3b8;border:1px solid #2d3148}.btn-ghost:hover{background:#2d3148}
+    .btn-sm{padding:4px 10px;font-size:.76rem}
+    .btn:disabled{opacity:.4;cursor:not-allowed}
+
+    /* DATE GROUPS (Histórico) */
+    .date-group{margin-bottom:16px;border:1px solid #2d3148;border-radius:10px;overflow:hidden}
+    .date-group-header{background:#13151f;padding:11px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer}
+    .date-group-header:hover{background:#1a1d27}
+    .date-group-header .dg-date{font-size:.88rem;font-weight:700;color:#cbd5e1}
+    .date-group-header .dg-stats{display:flex;gap:12px;font-size:.78rem;color:#64748b}
+    .date-group-header .dg-pnl{font-size:.9rem;font-weight:700}
+    .date-group-body{display:none}
+    .date-group-body.open{display:block}
+
+    /* BET ROW */
+    .bet-row{display:grid;grid-template-columns:1fr 130px 90px 90px 90px;align-items:center;gap:12px;padding:11px 16px;border-top:1px solid #1e2235;transition:background .15s}
+    .bet-row:hover{background:#1e2235}
+    .bet-row.win-row{border-left:3px solid #22c55e}
+    .bet-row.loss-row{border-left:3px solid #ef4444}
+    .bet-row.pend-row{border-left:3px solid #3b82f6}
+    .bet-row.nao-row{border-left:3px solid #374151;opacity:.6}
+
+    .bet-jogo{font-size:.875rem;font-weight:600;color:#e2e8f0}
+    .bet-meta{font-size:.75rem;color:#64748b;margin-top:2px}
+
+    /* MODAL */
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px}
+    .modal-box{background:#1a1d27;border:1px solid #2d3148;border-radius:12px;padding:24px;width:100%;max-width:460px;position:relative}
+    .modal-box h3{font-size:1rem;font-weight:700;color:#fff;margin-bottom:18px}
+    .modal-close{position:absolute;top:16px;right:16px;background:none;border:none;color:#64748b;font-size:1.2rem;cursor:pointer;padding:4px 8px}
+    .modal-close:hover{color:#e2e8f0}
+
+    .field{margin-bottom:14px}
+    .field label{display:block;font-size:.78rem;color:#94a3b8;margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
+    .field input{width:100%;background:#13151f;border:1px solid #2d3148;border-radius:7px;padding:9px 12px;color:#e2e8f0;font-size:.9rem}
+    .field input:focus{outline:none;border-color:#3b82f6}
+    .field .info{font-size:.8rem;color:#475569;margin-top:4px}
+
+    .modal-actions{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
+    .modal-actions .btn{flex:1}
+
+    /* GRADE SOFASCORE */
     .grade-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px}
-    .grade-header h2{font-size:1rem;font-weight:600;color:#cbd5e1}
-    .grade-info{font-size:.82rem;color:#64748b}
+    .liga-group{margin-bottom:18px;background:#1a1d27;border:1px solid #2d3148;border-radius:10px;overflow:hidden}
+    .liga-title{font-size:.75rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.6px;padding:9px 16px;background:#13151f;display:flex;align-items:center;gap:8px;border-bottom:1px solid #1e2235}
 
-    .liga-group{margin-bottom:20px}
-    .liga-title{font-size:.78rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.6px;padding:8px 0 10px;border-bottom:1px solid #1e2235;margin-bottom:0;display:flex;align-items:center;gap:8px}
-    .liga-title span{background:#1e2235;border-radius:4px;padding:2px 8px}
-
-    .match-card{display:grid;grid-template-columns:90px 1fr auto;align-items:center;gap:16px;padding:12px 16px;border-bottom:1px solid #1e2235;transition:background .15s}
+    .match-card{display:grid;grid-template-columns:76px 1fr auto;align-items:center;gap:14px;padding:11px 16px;border-bottom:1px solid #1e2235;transition:background .15s}
     .match-card:last-child{border-bottom:none}
     .match-card:hover{background:#1e2235}
-    .match-card.selecionado{border-left:3px solid #3b82f6;background:#0f1a2e}
-    .match-card.selecionado:hover{background:#122040}
-
-    .match-hora{font-size:.85rem;font-weight:600;color:#94a3b8;text-align:center}
-    .match-hora .dia{font-size:.7rem;color:#475569;display:block;margin-top:2px}
-
-    .match-times{display:flex;flex-direction:column;gap:5px}
-    .match-times .team{font-size:.9rem;color:#e2e8f0;font-weight:500}
+    .match-card.sel{border-left:3px solid #3b82f6;background:#0f1a2e}
+    .match-hora{font-size:.84rem;font-weight:600;color:#94a3b8;text-align:center}
+    .match-hora .dia{font-size:.68rem;color:#475569;display:block;margin-top:1px}
+    .match-times .team{font-size:.88rem;color:#e2e8f0;font-weight:500;line-height:1.5}
     .match-times .team.fav{color:#fff;font-weight:700}
-    .match-tags{display:flex;gap:5px;margin-top:4px;flex-wrap:wrap}
+    .match-tags{display:flex;gap:4px;margin-top:4px;flex-wrap:wrap}
+    .match-odds{display:flex;gap:5px}
+    .odd-box{text-align:center;background:#13151f;border:1px solid #2d3148;border-radius:6px;padding:5px 8px;min-width:44px}
+    .odd-box .ol{font-size:.62rem;color:#475569;display:block;margin-bottom:1px}
+    .odd-box .ov{font-size:.87rem;font-weight:700;color:#e2e8f0}
+    .odd-box.dest{border-color:#3b82f6;background:#0f1a2e}
+    .odd-box.dest .ov{color:#60a5fa}
 
-    .match-odds{display:flex;gap:6px;align-items:center}
-    .odd-box{text-align:center;background:#13151f;border:1px solid #2d3148;border-radius:6px;padding:5px 10px;min-width:48px}
-    .odd-box .odd-label{font-size:.65rem;color:#475569;display:block;margin-bottom:2px}
-    .odd-box .odd-val{font-size:.9rem;font-weight:700;color:#e2e8f0}
-    .odd-box.destaque{border-color:#3b82f6;background:#0f1a2e}
-    .odd-box.destaque .odd-val{color:#60a5fa}
-
-    /* ── QUOTA ── */
-    .quota-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;padding:18px}
-    .q-card{background:#13151f;border:1px solid #2d3148;border-radius:8px;padding:16px}
-    .q-card .ql{font-size:.75rem;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
-    .q-card .qv{font-size:1.5rem;font-weight:700;color:#fff}
-    .q-card .qs{font-size:.78rem;color:#64748b;margin-top:3px}
-
-    .progress-wrap{padding:0 18px 18px}
-    .progress-label{display:flex;justify-content:space-between;font-size:.8rem;color:#64748b;margin-bottom:6px}
-    .progress-bar{height:10px;background:#2d3148;border-radius:5px;overflow:hidden}
+    /* QUOTA */
+    .quota-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:13px;padding:16px}
+    .q-card{background:#13151f;border:1px solid #2d3148;border-radius:8px;padding:15px}
+    .q-card .ql{font-size:.72rem;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+    .q-card .qv{font-size:1.4rem;font-weight:700;color:#fff}
+    .q-card .qs{font-size:.73rem;color:#64748b;margin-top:3px}
+    .progress-wrap{padding:0 16px 16px}
+    .progress-label{display:flex;justify-content:space-between;font-size:.77rem;color:#64748b;margin-bottom:5px}
+    .progress-bar{height:9px;background:#2d3148;border-radius:5px;overflow:hidden}
     .progress-fill{height:100%;border-radius:5px;transition:width .5s}
     .progress-fill.safe{background:linear-gradient(90deg,#22c55e,#16a34a)}
     .progress-fill.warning{background:linear-gradient(90deg,#f59e0b,#d97706)}
     .progress-fill.critical{background:linear-gradient(90deg,#ef4444,#b91c1c)}
 
-    /* BOTAO SCAN */
-    .btn-scan{background:#3b82f6;color:#fff;border:none;border-radius:7px;padding:9px 18px;font-size:.85rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:7px;transition:background .2s}
-    .btn-scan:hover{background:#2563eb}
-    .btn-scan:disabled{background:#1e2235;color:#475569;cursor:not-allowed}
-    .btn-scan .spin{display:none;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
-    .btn-scan.loading .spin{display:inline-block}
-    @keyframes spin{to{transform:rotate(360deg)}}
+    .btn-actions{display:inline-flex;align-items:center;gap:7px;background:#21262d;color:#c9d1d9;border:1px solid #30363d;border-radius:7px;padding:8px 14px;font-size:.83rem;font-weight:600;text-decoration:none;transition:background .2s}
+    .btn-actions:hover{background:#30363d}
 
-    .scan-msg{font-size:.8rem;padding:8px 12px;border-radius:6px;margin-top:10px;display:none}
-    .scan-msg.show{display:block}
-    .scan-msg.ok{background:#14532d;color:#4ade80}
-    .scan-msg.err{background:#450a0a;color:#f87171}
-    .scan-msg.info{background:#1e293b;color:#94a3b8}
+    .stop-alert{background:#450a0a;border:1px solid #7f1d1d;border-radius:8px;padding:12px 16px;color:#fca5a5;font-size:.85rem;font-weight:600;margin-bottom:16px}
   </style>
 </head>
 <body>
@@ -132,16 +157,84 @@
 </header>
 
 <nav>
-  <button class="active" onclick="showTab('dashboard',this)">Dashboard</button>
+  <button class="active" onclick="showTab('banca',this)">Gestao de Banca</button>
+  <button onclick="showTab('dashboard',this)">Dashboard</button>
   <button onclick="showTab('grade',this)">Grade de Jogos</button>
   <button onclick="showTab('quota',this)">API Quota</button>
 </nav>
 
-<!-- ============================================================ -->
-<!-- TAB: DASHBOARD -->
-<!-- ============================================================ -->
-<div class="tab-content active" id="tab-dashboard">
+<!-- ============================================================ TAB: GESTÃO DE BANCA ============================================================ -->
+<div class="tab-content active" id="tab-banca">
 
+  <div id="stop-alerta" class="stop-alert" style="display:none">
+    STOP DIARIO ATINGIDO — Nao realize mais apostas hoje.
+  </div>
+
+  <!-- Cards de banca -->
+  <div class="cards">
+    <div class="card">
+      <div class="lbl">Banca Atual</div>
+      <div class="val b" id="b-banca">R$ --</div>
+      <div class="sub" id="b-banca-sub">--</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Lucro / Prejuizo</div>
+      <div class="val" id="b-lucro">--</div>
+      <div class="sub" id="b-roi">ROI: --</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Taxa de Acerto</div>
+      <div class="val g" id="b-taxa">--%</div>
+      <div class="sub" id="b-wl">-- W / -- L</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Sequencia</div>
+      <div class="val" id="b-streak">--</div>
+      <div class="sub" id="b-streak-tipo">--</div>
+    </div>
+    <div class="card">
+      <div class="lbl">P&L Hoje</div>
+      <div class="val" id="b-hoje">--</div>
+      <div class="sub" id="b-stop">Stop: --</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Stake Sugerido</div>
+      <div class="val" id="b-stake">R$ --</div>
+      <div class="sub">2.5% da banca</div>
+    </div>
+  </div>
+
+  <!-- Seleções de hoje -->
+  <section>
+    <h2>
+      Selecoes de Hoje
+      <span style="font-size:.75rem;color:#475569;font-weight:400" id="sel-hoje-sub">carregando...</span>
+    </h2>
+    <div id="sel-hoje-container"></div>
+  </section>
+
+  <!-- Curva de banca -->
+  <section>
+    <h2>Curva de Banca</h2>
+    <div class="chart-wrap"><canvas id="grafico-banca"></canvas></div>
+  </section>
+
+  <!-- Histórico agrupado por data -->
+  <section>
+    <h2>Historico de Apostas</h2>
+    <div id="historico-bets"></div>
+  </section>
+
+  <!-- Stats por liga -->
+  <section>
+    <h2>Performance por Liga</h2>
+    <div id="stats-liga"></div>
+  </section>
+
+</div>
+
+<!-- ============================================================ TAB: DASHBOARD ============================================================ -->
+<div class="tab-content" id="tab-dashboard">
   <div class="cards">
     <div class="card"><div class="lbl">Jogos (24h)</div><div class="val b" id="c-jogos">--</div></div>
     <div class="card"><div class="lbl">Aprovados</div><div class="val" id="c-aprov">--</div></div>
@@ -150,127 +243,135 @@
     <div class="card"><div class="lbl">Erros total</div><div class="val r" id="c-erros">--</div></div>
     <div class="card"><div class="lbl">Pendentes</div><div class="val" id="c-pend">--</div></div>
   </div>
-
   <section>
     <h2>Selecoes de Hoje</h2>
     <div id="tbl-hoje"></div>
   </section>
-
   <section>
-    <h2>Taxa de Acerto por Dia</h2>
-    <div class="chart-wrap"><canvas id="grafico"></canvas></div>
+    <h2>Taxa de Acerto por Dia (modelo)</h2>
+    <div class="chart-wrap"><canvas id="grafico-modelo"></canvas></div>
   </section>
-
   <section>
-    <h2>Historico Recente <span style="font-size:.75rem;color:#475569;font-weight:400">ultimas 30 entradas</span></h2>
+    <h2>Historico Recente <span style="font-size:.72rem;color:#475569;font-weight:400">ultimas 30 entradas</span></h2>
     <div id="tbl-historico"></div>
   </section>
-
 </div>
 
-<!-- ============================================================ -->
-<!-- TAB: GRADE DE JOGOS -->
-<!-- ============================================================ -->
+<!-- ============================================================ TAB: GRADE ============================================================ -->
 <div class="tab-content" id="tab-grade">
-
   <div class="grade-header">
     <div>
-      <h2>Grade — Proximas 24h</h2>
-      <div class="grade-info" id="grade-info">Carregando...</div>
+      <h2 style="font-size:1rem;font-weight:600;color:#cbd5e1">Grade — Proximas 24h</h2>
+      <div style="font-size:.82rem;color:#64748b;margin-top:3px" id="grade-info">Carregando...</div>
     </div>
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
-      <button class="btn-scan" id="btn-scan" onclick="rodarScan()">
-        <span class="spin"></span>
-        Rodar Scan Agora
-      </button>
-      <div class="scan-msg" id="scan-msg"></div>
+      <button class="btn btn-primary" id="btn-scan" onclick="rodarScan()">Rodar Scan Agora</button>
+      <div id="scan-msg" style="font-size:.78rem;color:#64748b"></div>
     </div>
   </div>
-
   <div id="grade-container"></div>
-
 </div>
 
-<!-- ============================================================ -->
-<!-- TAB: API QUOTA -->
-<!-- ============================================================ -->
+<!-- ============================================================ TAB: QUOTA ============================================================ -->
 <div class="tab-content" id="tab-quota">
-
   <div class="grade-header">
     <div>
-      <h2>Status da API — The Odds API</h2>
-      <div class="grade-info" id="quota-atualizado">--</div>
+      <h2 style="font-size:1rem;font-weight:600;color:#cbd5e1">Status da API — The Odds API</h2>
+      <div style="font-size:.82rem;color:#64748b;margin-top:3px" id="quota-atualizado">--</div>
     </div>
-    <div>
-      <button class="btn-scan" id="btn-scan2" onclick="rodarScan()">
-        <span class="spin"></span>
-        Rodar Scan Agora
-      </button>
-      <div class="scan-msg" id="scan-msg2"></div>
-    </div>
+    <button class="btn btn-primary" onclick="rodarScan()">Rodar Scan Agora</button>
   </div>
-
   <section>
     <h2>Uso de Requisicoes do Mes</h2>
     <div class="progress-wrap">
-      <div class="progress-label">
-        <span id="q-usado-label">-- usadas</span>
-        <span id="q-restante-label">-- restantes</span>
-      </div>
-      <div class="progress-bar">
-        <div class="progress-fill safe" id="q-bar" style="width:0%"></div>
-      </div>
+      <div class="progress-label"><span id="q-usado-label">--</span><span id="q-restante-label">--</span></div>
+      <div class="progress-bar"><div class="progress-fill safe" id="q-bar" style="width:0%"></div></div>
     </div>
     <div class="quota-grid">
-      <div class="q-card">
-        <div class="ql">Restantes no mes</div>
-        <div class="qv" id="q-remaining">--</div>
-        <div class="qs">de 500 requisicoes/mes (free)</div>
-      </div>
-      <div class="q-card">
-        <div class="ql">Ja utilizadas</div>
-        <div class="qv" id="q-used">--</div>
-        <div class="qs">desde o inicio do mes</div>
-      </div>
-      <div class="q-card">
-        <div class="ql">Dias restantes no mes</div>
-        <div class="qv" id="q-dias">--</div>
-        <div class="qs">dias ate virar o mes</div>
-      </div>
-      <div class="q-card">
-        <div class="ql">Budget diario seguro</div>
-        <div class="qv" id="q-budget">--</div>
-        <div class="qs">req/dia p/ durar o mes</div>
-      </div>
+      <div class="q-card"><div class="ql">Restantes</div><div class="qv" id="q-remaining">--</div><div class="qs">de 500/mes (free)</div></div>
+      <div class="q-card"><div class="ql">Utilizadas</div><div class="qv" id="q-used">--</div><div class="qs">desde inicio do mes</div></div>
+      <div class="q-card"><div class="ql">Dias restantes</div><div class="qv" id="q-dias">--</div><div class="qs">ate virar o mes</div></div>
+      <div class="q-card"><div class="ql">Budget diario</div><div class="qv" id="q-budget">--</div><div class="qs">req/dia seguros</div></div>
     </div>
   </section>
-
   <section>
-    <h2>Status e Recomendacoes</h2>
-    <div style="padding:18px">
-      <div id="quota-status-bloco" style="padding:16px;border-radius:8px;background:#1e2235;margin-bottom:14px">
-        <div style="font-size:1rem;font-weight:700;margin-bottom:8px" id="quota-status-titulo">Carregando...</div>
-        <div style="font-size:.85rem;color:#94a3b8" id="quota-status-desc">--</div>
+    <h2>Status</h2>
+    <div style="padding:16px">
+      <div id="quota-status-bloco" style="padding:14px;border-radius:8px;background:#1e2235;margin-bottom:12px">
+        <div style="font-size:.95rem;font-weight:700;margin-bottom:5px" id="quota-status-titulo">--</div>
+        <div style="font-size:.83rem;color:#94a3b8" id="quota-status-desc">--</div>
       </div>
-      <div style="font-size:.82rem;color:#64748b;line-height:1.7">
-        <strong style="color:#94a3b8">Como funciona o consumo:</strong><br>
-        Cada scan matinal consome 10 requisicoes (1 por liga monitorada).<br>
-        Com 500 req/mes voce tem ate <strong style="color:#e2e8f0">50 scans</strong> — mais que suficiente (1/dia = 30/mes).<br>
-        <br>
-        <strong style="color:#94a3b8">Scans adicionais disponiveis hoje:</strong>
-        <span id="q-extra-hoje" style="color:#60a5fa;font-weight:700">--</span> scans extras alem do automatico.<br>
-        <br>
-        <strong style="color:#94a3b8">Ultimo scan:</strong> <span id="q-ultimo">--</span>
+      <div style="font-size:.8rem;color:#64748b;line-height:1.8">
+        10 req por scan · 500/mes gratis = ate 50 scans ·
+        Scans extras hoje: <span id="q-extra" style="color:#60a5fa;font-weight:700">--</span> ·
+        Ultimo scan: <span id="q-ultimo">--</span>
       </div>
     </div>
   </section>
+</div>
 
+<!-- ============================================================ MODAL: REGISTRAR APOSTA ============================================================ -->
+<div class="modal-overlay" id="modal-registro" style="display:none" onclick="if(event.target===this)closeModal('registro')">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('registro')">x</button>
+    <h3>Registrar Aposta</h3>
+    <div style="background:#13151f;border-radius:8px;padding:12px;margin-bottom:16px">
+      <div style="font-size:.9rem;font-weight:700;color:#e2e8f0;margin-bottom:4px" id="m-jogo">--</div>
+      <div style="font-size:.8rem;color:#64748b" id="m-liga">--</div>
+      <div style="margin-top:8px;display:flex;gap:16px;font-size:.85rem">
+        <span>Fav: <strong id="m-fav" style="color:#60a5fa">--</strong></span>
+        <span>Odd: <strong id="m-odd">--</strong></span>
+        <span>Score: <strong id="m-score">--</strong>/100</span>
+      </div>
+    </div>
+    <div class="field">
+      <label>Stake (R$)</label>
+      <input type="number" id="m-stake" step="0.01" min="1" placeholder="25.00"/>
+      <div class="info" id="m-stake-info">2.5% da banca atual</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-success" onclick="submitBet(1)">Apostei</button>
+      <button class="btn btn-ghost" onclick="submitBet(0)">Nao Apostei</button>
+      <button class="btn btn-ghost" onclick="closeModal('registro')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: ATUALIZAR RESULTADO -->
+<div class="modal-overlay" id="modal-resultado" style="display:none" onclick="if(event.target===this)closeModal('resultado')">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('resultado')">x</button>
+    <h3>Resultado da Aposta</h3>
+    <div style="background:#13151f;border-radius:8px;padding:12px;margin-bottom:16px">
+      <div style="font-size:.9rem;font-weight:700;color:#e2e8f0;margin-bottom:4px" id="r-jogo">--</div>
+      <div style="font-size:.82rem;color:#94a3b8;margin-top:6px">
+        Stake: <strong id="r-stake">--</strong> · Odd: <strong id="r-odd">--</strong>
+      </div>
+      <div style="font-size:.8rem;color:#64748b;margin-top:4px">
+        WIN → +R$<span id="r-win-pnl">--</span> &nbsp;|&nbsp; LOSS → -R$<span id="r-loss-pnl">--</span>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-success" onclick="updateResult('WIN')">WIN</button>
+      <button class="btn btn-danger" onclick="updateResult('LOSS')">LOSS</button>
+      <button class="btn btn-ghost" onclick="updateResult('VOID')">VOID (anulada)</button>
+      <button class="btn btn-ghost" onclick="closeModal('resultado')">Cancelar</button>
+    </div>
+    <div style="margin-top:14px;border-top:1px solid #2d3148;padding-top:12px;display:flex;justify-content:flex-end">
+      <button class="btn btn-ghost btn-sm" onclick="deleteBet()">Excluir aposta</button>
+    </div>
+  </div>
 </div>
 
 <script>
-// ============================================================
-// UTILITARIOS
-// ============================================================
+// ── ESTADO GLOBAL ──
+let _bancaStats = {};
+let _selHoje = [];
+let _registrados = new Set();
+let _currentBet = null; // para o modal de resultado
+let _scanPoll = null;
+
+// ── UTILS ──
 function tick(){
   const n=new Date();
   document.getElementById('data-hora').textContent=
@@ -285,57 +386,303 @@ function showTab(id,btn){
   btn.classList.add('active');
 }
 
-function badge(v){
-  if(v===true||v==='True') return '<span class="badge win">ACERTO</span>';
-  if(v===false||v==='False') return '<span class="badge loss">ERRO</span>';
-  return '<span class="badge pend">PENDENTE</span>';
+function fmtR(v){return 'R$ '+Number(v).toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.')}
+function fmtHora(iso){if(!iso)return '--';try{return new Date(iso).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}catch{return '--'}}
+function fmtData(iso){if(!iso)return '--';try{return new Date(iso).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})}catch{return '--'}}
+function fmtDataLonga(s){if(!s)return '--';const[y,m,d]=s.split('-');return `${d}/${m}/${y}`}
+
+function badgeRes(r){
+  const m={WIN:'win',LOSS:'loss',PENDENTE:'pend',VOID:'void',NAO_APOSTADO:'naoapostou'};
+  const labels={WIN:'WIN',LOSS:'LOSS',PENDENTE:'PENDENTE',VOID:'VOID',NAO_APOSTADO:'NAO APOSTOU'};
+  const cls=m[r]||'void';
+  return `<span class="badge ${cls}">${labels[r]||r}</span>`;
 }
 
-function sbar(sc){
-  const p=Math.min(100,Math.max(0,sc||0));
-  return `<div class="sbar"><span>${sc||'--'}</span><div class="bar"><div class="fill" style="width:${p}%"></div></div></div>`;
+function pnlColor(v){return v>0?'g':v<0?'r':''}
+function sbar(sc){const p=Math.min(100,Math.max(0,sc||0));return `<div class="sbar"><span>${sc||'--'}</span><div class="bar"><div class="fill" style="width:${p}%"></div></div></div>`}
+
+// ── MODAIS ──
+function openModal(id){document.getElementById('modal-'+id).style.display='flex'}
+function closeModal(id){document.getElementById('modal-'+id).style.display='none'}
+
+// ── MODAL REGISTRO ──
+let _regPayload = {};
+
+function abrirRegistro(sel){
+  _regPayload = sel;
+  document.getElementById('m-jogo').textContent=sel.event||'--';
+  document.getElementById('m-liga').textContent=sel.competition||'--';
+  document.getElementById('m-fav').textContent=sel.favorito||'--';
+  document.getElementById('m-odd').textContent=sel.odd_favorito||'--';
+  document.getElementById('m-score').textContent=sel.score||'--';
+  const stake=_bancaStats.stake_sugerido||25;
+  document.getElementById('m-stake').value=stake.toFixed(2);
+  document.getElementById('m-stake-info').textContent=`2.5% da banca atual (${fmtR(_bancaStats.banca_atual||1000)})`;
+  openModal('registro');
 }
 
-function fmtHora(iso){
-  if(!iso) return '--';
-  try{
-    const d=new Date(iso);
-    return d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-  }catch{return '--'}
+function submitBet(apostado){
+  const stake=parseFloat(document.getElementById('m-stake').value)||0;
+  if(apostado&&stake<=0){alert('Informe um valor de stake valido.');return}
+
+  const hoje=new Date();
+  const hoje_brt=new Date(hoje.getTime()-3*3600000);
+  const data_jogo=_regPayload.start_time
+    ? new Date(_regPayload.start_time).toISOString().slice(0,10)
+    : hoje_brt.toISOString().slice(0,10);
+
+  const body={
+    apostado, stake_reais: apostado?stake:0,
+    data_jogo, start_time: _regPayload.start_time||'',
+    liga: _regPayload.competition||'',
+    jogo: _regPayload.event||'',
+    home_team: _regPayload.home_team||'',
+    away_team: _regPayload.away_team||'',
+    favorito: _regPayload.favorito||'',
+    odd_entrada: _regPayload.odd_favorito||0,
+    motivo_entrada: _regPayload.motivo||'',
+    score_entrada: _regPayload.score||0,
+    market_id: _regPayload.market_id||'',
+  };
+
+  fetch('/api/bets',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
+    .then(r=>r.json())
+    .then(()=>{
+      closeModal('registro');
+      _registrados.add(_regPayload.market_id||'');
+      carregarBanca();
+      renderSelHoje();
+    })
+    .catch(e=>alert('Erro ao registrar: '+e));
 }
 
-function fmtData(iso){
-  if(!iso) return '--';
-  try{
-    const d=new Date(iso);
-    return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
-  }catch{return '--'}
+// ── MODAL RESULTADO ──
+function abrirResultado(bet){
+  _currentBet=bet;
+  document.getElementById('r-jogo').textContent=bet.jogo||'--';
+  document.getElementById('r-stake').textContent=fmtR(bet.stake_reais);
+  document.getElementById('r-odd').textContent=bet.odd_entrada;
+  const winPnl=((bet.stake_reais||0)*((bet.odd_entrada||1)-1)).toFixed(2);
+  const lossPnl=(bet.stake_reais||0).toFixed(2);
+  document.getElementById('r-win-pnl').textContent=winPnl;
+  document.getElementById('r-loss-pnl').textContent=lossPnl;
+  openModal('resultado');
 }
 
-// ============================================================
-// TAB DASHBOARD
-// ============================================================
+function updateResult(resultado){
+  if(!_currentBet)return;
+  fetch(`/api/bets/${_currentBet.id}`,{
+    method:'PUT',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({resultado})
+  })
+    .then(r=>r.json())
+    .then(()=>{closeModal('resultado');carregarBanca()})
+    .catch(e=>alert('Erro: '+e));
+}
+
+function deleteBet(){
+  if(!_currentBet||!confirm('Excluir esta aposta?'))return;
+  fetch(`/api/bets/${_currentBet.id}`,{method:'DELETE'})
+    .then(()=>{closeModal('resultado');carregarBanca()})
+    .catch(e=>alert('Erro: '+e));
+}
+
+// ── CARREGAR BANCA ──
+function carregarBanca(){
+  // Stats cards
+  fetch('/api/bankroll').then(r=>r.json()).then(s=>{
+    _bancaStats=s;
+    document.getElementById('b-banca').textContent=fmtR(s.banca_atual||0);
+    document.getElementById('b-banca-sub').textContent=`Inicial: ${fmtR(s.banca_inicial||0)}`;
+
+    const lucro=s.lucro_total||0;
+    const elL=document.getElementById('b-lucro');
+    elL.textContent=(lucro>=0?'+':'')+fmtR(lucro);
+    elL.className='val '+(lucro>0?'g':lucro<0?'r':'');
+    document.getElementById('b-roi').textContent=`ROI: ${s.roi_percent||0}%`;
+
+    document.getElementById('b-taxa').textContent=(s.taxa_acerto||0)+'%';
+    document.getElementById('b-wl').textContent=`${s.wins||0} W / ${s.losses||0} L`;
+
+    const streak=s.streak||0;
+    const tipo=s.streak_tipo;
+    const elS=document.getElementById('b-streak');
+    elS.textContent=(streak||'--')+(streak&&tipo?' '+tipo:'');
+    elS.className='val '+(tipo==='WIN'?'g':tipo==='LOSS'?'r':'');
+    document.getElementById('b-streak-tipo').textContent=streak?'consecutivos':'sem apostas';
+
+    const pnlHoje=s.pnl_hoje||0;
+    const elH=document.getElementById('b-hoje');
+    elH.textContent=(pnlHoje>=0?'+':'')+fmtR(pnlHoje);
+    elH.className='val '+(pnlHoje>0?'g':pnlHoje<0?'r':'');
+    document.getElementById('b-stop').textContent=`Stop: ${fmtR(s.stop_limite||0)}`;
+
+    document.getElementById('b-stake').textContent=fmtR(s.stake_sugerido||0);
+
+    const stopDiv=document.getElementById('stop-alerta');
+    stopDiv.style.display=s.stop_atingido?'block':'none';
+  });
+
+  // Historico de apostas
+  fetch('/api/bets').then(r=>r.json()).then(bets=>{
+    // Agrupa por data
+    const grupos={};
+    for(const b of bets){
+      const d=b.data_jogo||'sem data';
+      if(!grupos[d])grupos[d]=[];
+      grupos[d].push(b);
+    }
+    const datas=Object.keys(grupos).sort().reverse();
+
+    // Registrados hoje
+    const hoje=new Date();
+    const hoje_brt=new Date(hoje.getTime()-3*3600000).toISOString().slice(0,10);
+    _registrados=new Set(
+      bets.filter(b=>b.data_jogo===hoje_brt).map(b=>b.market_id).filter(Boolean)
+    );
+    renderSelHoje();
+
+    // Renderiza histórico
+    if(!datas.length){
+      document.getElementById('historico-bets').innerHTML='<div class="empty">Nenhuma aposta registrada ainda.</div>';
+      return;
+    }
+
+    let html='';
+    for(const data of datas){
+      const grupo=grupos[data];
+      const apostadas=grupo.filter(b=>b.apostado==1);
+      const wins=apostadas.filter(b=>b.resultado==='WIN').length;
+      const losses=apostadas.filter(b=>b.resultado==='LOSS').length;
+      const pnlDia=apostadas.reduce((a,b)=>(a+(b.pnl_reais||0)),0);
+      const pnlColor_=pnlDia>0?'g':pnlDia<0?'r':'';
+
+      html+=`<div class="date-group">
+        <div class="date-group-header" onclick="toggleGrupo(this)">
+          <span class="dg-date">${fmtDataLonga(data)}</span>
+          <div class="dg-stats">
+            <span>${apostadas.length} aposta${apostadas.length!==1?'s':''}</span>
+            <span>${wins}W / ${losses}L</span>
+          </div>
+          <span class="dg-pnl ${pnlColor_}">${pnlDia>=0?'+':''}${fmtR(pnlDia)}</span>
+        </div>
+        <div class="date-group-body ${data===hoje_brt?'open':''}">`;
+
+      for(const b of grupo){
+        const isApostado=b.apostado==1;
+        const rowClass=b.resultado==='WIN'?'win-row':b.resultado==='LOSS'?'loss-row':b.resultado==='PENDENTE'?'pend-row':'nao-row';
+        const pnl=b.pnl_reais;
+        const canUpdate=isApostado&&b.resultado==='PENDENTE';
+        const canView=isApostado&&b.resultado!=='PENDENTE';
+
+        html+=`<div class="bet-row ${rowClass}">
+          <div>
+            <div class="bet-jogo">${b.jogo||'--'}</div>
+            <div class="bet-meta">${b.liga||'--'} · ${fmtHora(b.start_time)} · Fav: <strong>${b.favorito}</strong> @ ${b.odd_entrada} · Score: ${b.score_entrada||'--'}</div>
+          </div>
+          <div>${badgeRes(b.resultado)}</div>
+          <div style="font-size:.88rem;font-weight:600">${isApostado?fmtR(b.stake_reais):'-'}</div>
+          <div style="font-size:.88rem;font-weight:700" class="${pnlColor(pnl)}">${pnl!=null?(pnl>=0?'+':'')+fmtR(pnl):'-'}</div>
+          <div>${canUpdate?`<button class="btn btn-primary btn-sm" onclick='abrirResultado(${JSON.stringify(b)})'>Resultado</button>`:
+            (isApostado&&canView?`<button class="btn btn-ghost btn-sm" onclick='abrirResultado(${JSON.stringify(b)})'>Editar</button>`:'-')}</div>
+        </div>`;
+      }
+      html+='</div></div>';
+    }
+    document.getElementById('historico-bets').innerHTML=html;
+  });
+
+  // Curva de banca
+  fetch('/api/bankroll/curve').then(r=>r.json()).then(curve=>{
+    const labels=curve.map(p=>p.data==='inicio'?'Inicio':fmtDataLonga(p.data));
+    const values=curve.map(p=>p.banca);
+    const ctx=document.getElementById('grafico-banca').getContext('2d');
+    if(window._chartBanca)window._chartBanca.destroy();
+    window._chartBanca=new Chart(ctx,{
+      type:'line',
+      data:{labels,datasets:[{
+        label:'Banca (R$)',data:values,
+        borderColor:'#22c55e',backgroundColor:'rgba(34,197,94,.08)',
+        tension:.3,fill:true,pointRadius:4,
+        pointBackgroundColor:values.map((v,i)=>i===0?'#475569':v>=(values[i-1]||v)?'#22c55e':'#ef4444'),
+      }]},
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        scales:{
+          y:{ticks:{color:'#64748b',callback:v=>'R$'+v},grid:{color:'#1e2235'}},
+          x:{ticks:{color:'#64748b'},grid:{color:'#1e2235'}}
+        },
+        plugins:{legend:{labels:{color:'#94a3b8'}}}
+      }
+    });
+  });
+
+  // Stats por liga
+  fetch('/api/bankroll/por_liga').then(r=>r.json()).then(stats=>{
+    const el=document.getElementById('stats-liga');
+    if(!stats.length){el.innerHTML='<div class="empty">Sem dados ainda.</div>';return}
+    const rows=stats.map(s=>`<tr>
+      <td>${s.liga}</td>
+      <td><span class="badge win">${s.wins}W</span> <span class="badge loss">${s.losses}L</span></td>
+      <td>${s.taxa}%</td>
+      <td class="${pnlColor(s.pnl)}">${s.pnl>=0?'+':''}${fmtR(s.pnl)}</td>
+    </tr>`).join('');
+    el.innerHTML=`<table><thead><tr><th>Liga</th><th>Resultado</th><th>Taxa</th><th>P&L</th></tr></thead><tbody>${rows}</tbody></table>`;
+  });
+}
+
+function toggleGrupo(header){
+  const body=header.nextElementSibling;
+  body.classList.toggle('open');
+}
+
+// ── SELEÇÕES DE HOJE (na aba banca) ──
+function renderSelHoje(){
+  const el=document.getElementById('sel-hoje-container');
+  if(!_selHoje.length){
+    el.innerHTML='<div class="empty">Nenhuma selecao aprovada hoje. Aguarde o scan das 8h ou rode manualmente.</div>';
+    document.getElementById('sel-hoje-sub').textContent='0 selecoes';
+    return;
+  }
+  document.getElementById('sel-hoje-sub').textContent=`${_selHoje.length} selecao${_selHoje.length>1?'es':''}`;
+  const rows=_selHoje.map(s=>{
+    const jaReg=_registrados.has(s.market_id||'');
+    const hora=fmtHora(s.start_time);
+    const forma=s.form_jogos_analisados>0?`${s.form_vitorias}/5 vitorias`:'sem dados de forma';
+    return `<div class="bet-row pend-row">
+      <div>
+        <div class="bet-jogo">${hora}  ${s.event}</div>
+        <div class="bet-meta">${s.competition} · Fav: <strong>${s.favorito}</strong> @ ${s.odd_favorito} · Score: ${s.score}/100 · ${forma}</div>
+      </div>
+      <div>${jaReg?'<span class="badge pend">REGISTRADO</span>':''}</div>
+      <div></div>
+      <div></div>
+      <div>${jaReg?'':'<button class="btn btn-primary btn-sm" onclick="abrirRegistro('+JSON.stringify(s).replace(/"/g,"&quot;")+')" >Registrar</button>'}</div>
+    </div>`;
+  }).join('');
+  el.innerHTML=`<div style="padding:6px 0">${rows}</div>`;
+}
+
+// ── CARREGAR SELEÇÕES ──
 fetch('/api/selecoes_hoje').then(r=>r.json()).then(data=>{
+  _selHoje=data.selecoes||[];
   document.getElementById('c-jogos').textContent=data.total_jogos??'--';
-  const sel=data.selecoes||[];
-  document.getElementById('c-aprov').textContent=sel.length;
+  document.getElementById('c-aprov').textContent=_selHoje.length;
   const el=document.getElementById('tbl-hoje');
-  if(!sel.length){el.innerHTML='<div class="empty">Nenhuma selecao aprovada ainda. Rode o scan matinal.</div>';return}
-  el.innerHTML=`<table>
-    <thead><tr><th>Hora</th><th>Jogo</th><th>Favorito / Odd</th><th>Score</th><th>Forma</th><th>Casas</th></tr></thead>
-    <tbody>${sel.map(s=>`<tr>
+  if(!_selHoje.length){el.innerHTML='<div class="empty">Nenhuma selecao ainda.</div>';return}
+  el.innerHTML=`<table><thead><tr><th>Hora</th><th>Jogo</th><th>Favorito / Odd</th><th>Score</th><th>Forma</th><th>Casas</th></tr></thead>
+    <tbody>${_selHoje.map(s=>`<tr>
       <td>${fmtHora(s.start_time)}</td>
       <td><strong>${s.event}</strong><br><span class="sub-txt">${s.competition}</span></td>
       <td>${s.favorito}<br><strong>${s.odd_favorito}</strong></td>
       <td>${sbar(s.score)}</td>
       <td class="sub-txt">${s.form_jogos_analisados>0?s.form_vitorias+'/5 vitorias':'sem dados de forma'}</td>
       <td>${s.num_bookmakers}</td>
-    </tr>`).join('')}</tbody>
-  </table>`;
-}).catch(()=>{
-  document.getElementById('tbl-hoje').innerHTML='<div class="empty">Erro ao carregar selecoes.</div>';
-});
+    </tr>`).join('')}</tbody></table>`;
+}).catch(()=>{document.getElementById('tbl-hoje').innerHTML='<div class="empty">Erro ao carregar.</div>'});
 
+// ── HISTORICO DO MODELO (aba dashboard) ──
 fetch('/api/historico').then(r=>r.json()).then(rows=>{
   const ac=rows.filter(r=>r.favorito_ganhou==='True').length;
   const er=rows.filter(r=>r.favorito_ganhou==='False').length;
@@ -348,19 +695,16 @@ fetch('/api/historico').then(r=>r.json()).then(rows=>{
 
   const rec=rows.slice(-30).reverse();
   const el=document.getElementById('tbl-historico');
-  if(!rec.length){el.innerHTML='<div class="empty">Sem historico disponivel ainda.</div>';}
+  if(!rec.length){el.innerHTML='<div class="empty">Sem historico.</div>';}
   else{
-    el.innerHTML=`<table>
-      <thead><tr><th>Data</th><th>Jogo</th><th>Liga</th><th>Fav / Odd</th><th>Score</th><th>Resultado</th><th>Status</th></tr></thead>
+    el.innerHTML=`<table><thead><tr><th>Data</th><th>Jogo</th><th>Liga</th><th>Fav / Odd</th><th>Score</th><th>Resultado</th><th>Status</th></tr></thead>
       <tbody>${rec.map(r=>`<tr>
         <td>${r.data}</td><td>${r.event}</td><td>${r.competition}</td>
         <td>${r.favorito}<br><strong>${r.odd_favorito}</strong></td>
-        <td>${r.score||'--'}</td><td>${r.resultado_real}</td><td>${badge(r.favorito_ganhou)}</td>
-      </tr>`).join('')}</tbody>
-    </table>`;
+        <td>${r.score||'--'}</td><td>${r.resultado_real}</td>
+        <td>${r.favorito_ganhou==='True'?'<span class="badge win">ACERTO</span>':r.favorito_ganhou==='False'?'<span class="badge loss">ERRO</span>':'<span class="badge void">PENDENTE</span>'}</td>
+      </tr>`).join('')}</tbody></table>`;
   }
-
-  // Grafico
   const pd={};
   for(const r of rows){
     if(!pd[r.data])pd[r.data]={a:0,e:0};
@@ -369,216 +713,111 @@ fetch('/api/historico').then(r=>r.json()).then(rows=>{
   }
   const dias=Object.keys(pd).sort();
   const txs=dias.map(d=>{const{a,e}=pd[d];return(a+e)>0?Math.round(a/(a+e)*100):null});
-  new Chart(document.getElementById('grafico').getContext('2d'),{
-    type:'line',
-    data:{labels:dias,datasets:[{
-      label:'Taxa de acerto (%)',data:txs,
-      borderColor:'#3b82f6',backgroundColor:'rgba(59,130,246,.07)',
-      tension:.35,fill:true,
-      pointBackgroundColor:txs.map(t=>t===null?'#475569':t>=60?'#22c55e':t>=50?'#f59e0b':'#ef4444'),
-      pointRadius:5,spanGaps:true
-    }]},
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      scales:{
-        y:{min:0,max:100,ticks:{color:'#64748b',callback:v=>v+'%'},grid:{color:'#1e2235'}},
-        x:{ticks:{color:'#64748b'},grid:{color:'#1e2235'}}
-      },
-      plugins:{legend:{labels:{color:'#94a3b8'}},tooltip:{callbacks:{label:c=>c.parsed.y+'%'}}}
-    }
-  });
-}).catch(()=>{
-  document.getElementById('tbl-historico').innerHTML='<div class="empty">Erro ao carregar historico.</div>';
-});
-
-// ============================================================
-// TAB GRADE DE JOGOS (SofaScore style)
-// ============================================================
-function carregarGrade(){
-  fetch('/api/grade_completa').then(r=>r.json()).then(data=>{
-    const jogos=data.jogos||[];
-    document.getElementById('grade-info').textContent=
-      `${data.total_jogos||0} jogos | ${data.total_selecionados||0} selecionados | Janela: proximas 24h`;
-
-    const por_liga={};
-    for(const j of jogos){
-      const l=j.liga||'Outra';
-      if(!por_liga[l])por_liga[l]=[];
-      por_liga[l].push(j);
-    }
-
-    const ligas_ord=Object.keys(por_liga).sort((a,b)=>{
-      const as=por_liga[a].some(j=>j.selecionado)?1:0;
-      const bs=por_liga[b].some(j=>j.selecionado)?1:0;
-      return bs-as||a.localeCompare(b);
+  if(dias.length){
+    new Chart(document.getElementById('grafico-modelo').getContext('2d'),{
+      type:'line',
+      data:{labels:dias,datasets:[{
+        label:'Taxa de acerto (%)',data:txs,
+        borderColor:'#3b82f6',backgroundColor:'rgba(59,130,246,.07)',
+        tension:.35,fill:true,spanGaps:true,
+        pointBackgroundColor:txs.map(t=>t===null?'#475569':t>=60?'#22c55e':t>=50?'#f59e0b':'#ef4444'),
+        pointRadius:5
+      }]},
+      options:{responsive:true,maintainAspectRatio:false,
+        scales:{y:{min:0,max:100,ticks:{color:'#64748b',callback:v=>v+'%'},grid:{color:'#1e2235'}},x:{ticks:{color:'#64748b'},grid:{color:'#1e2235'}}},
+        plugins:{legend:{labels:{color:'#94a3b8'}}}}
     });
+  }
+}).catch(()=>{});
 
-    if(!jogos.length){
-      document.getElementById('grade-container').innerHTML=
-        '<div class="empty">Nenhum jogo encontrado. Clique em "Rodar Scan Agora" para buscar jogos.</div>';
-      return;
+// ── GRADE SOFASCORE ──
+fetch('/api/grade_completa').then(r=>r.json()).then(data=>{
+  const jogos=data.jogos||[];
+  document.getElementById('grade-info').textContent=
+    `${data.total_jogos||0} jogos · ${data.total_selecionados||0} selecionados · Janela: proximas 24h`;
+  if(!jogos.length){document.getElementById('grade-container').innerHTML='<div class="empty">Clique em "Rodar Scan Agora".</div>';return}
+  const pg={};
+  for(const j of jogos){const l=j.liga||'Outra';if(!pg[l])pg[l]=[];pg[l].push(j)}
+  const ligas=Object.keys(pg).sort((a,b)=>{const as=pg[a].some(j=>j.selecionado)?1:0,bs=pg[b].some(j=>j.selecionado)?1:0;return bs-as||a.localeCompare(b)});
+  let html='';
+  for(const liga of ligas){
+    const nj=pg[liga],ns=nj.filter(j=>j.selecionado).length;
+    html+=`<div class="liga-group"><div class="liga-title"><span style="flex:1">${liga.toUpperCase()}</span>${ns?`<span class="badge sel">${ns} sel.</span>`:''}<span style="color:#475569;font-size:.72rem">${nj.length} jogo${nj.length>1?'s':''}</span></div>`;
+    for(const j of nj){
+      const isSel=j.selecionado,fav=j.favorito||'',hFav=j.home_team===fav,aFav=j.away_team===fav;
+      const tags=[];
+      if(isSel)tags.push(`<span class="badge sel">SELECIONADO</span>`);
+      if(isSel&&j.score)tags.push(`<span style="font-size:.7rem;color:#60a5fa">Score: ${j.score}/100</span>`);
+      if(isSel&&j.form_jogos_analisados>0)tags.push(`<span style="font-size:.7rem;color:#94a3b8">Forma: ${j.form_vitorias}/5</span>`);
+      if(isSel&&!j.form_jogos_analisados)tags.push(`<span style="font-size:.68rem;color:#475569">Sem dados de forma</span>`);
+      if(j.status_filtro==='FORA_RANGE'&&!isSel)tags.push(`<span style="font-size:.68rem;color:#475569">Odd fora do filtro</span>`);
+      if(j.status_filtro==='SEM_ODDS')tags.push(`<span style="font-size:.68rem;color:#475569">Poucas casas</span>`);
+      html+=`<div class="match-card ${isSel?'sel':''}">
+        <div class="match-hora">${fmtHora(j.start_time)}<span class="dia">${fmtData(j.start_time)}</span></div>
+        <div class="match-times">
+          <div class="team ${hFav?'fav':''}">${j.home_team}</div>
+          <div class="team ${aFav?'fav':''}">${j.away_team}</div>
+          <div class="match-tags">${tags.join('')}</div>
+        </div>
+        <div class="match-odds">
+          <div class="odd-box ${hFav&&isSel?'dest':''}"><span class="ol">Casa</span><span class="ov">${j.odd_home||'--'}</span></div>
+          <div class="odd-box"><span class="ol">Emp</span><span class="ov">${j.odd_draw||'--'}</span></div>
+          <div class="odd-box ${aFav&&isSel?'dest':''}"><span class="ol">Fora</span><span class="ov">${j.odd_away||'--'}</span></div>
+        </div>
+      </div>`;
     }
+    html+='</div>';
+  }
+  document.getElementById('grade-container').innerHTML=html;
+}).catch(()=>{document.getElementById('grade-container').innerHTML='<div class="empty">Erro ao carregar grade.</div>'});
 
-    let html='';
-    for(const liga of ligas_ord){
-      const njogos=por_liga[liga];
-      const nsel=njogos.filter(j=>j.selecionado).length;
-      html+=`<div class="liga-group">
-        <div class="liga-title">
-          <span>${liga.toUpperCase()}</span>
-          ${nsel>0?`<span class="badge sel">${nsel} sel.</span>`:''}
-          <span style="color:#475569;font-size:.75rem;margin-left:auto">${njogos.length} jogo${njogos.length>1?'s':''}</span>
-        </div>`;
+// ── QUOTA ──
+fetch('/api/quota').then(r=>r.json()).then(q=>{
+  if(!q||q.status==='UNKNOWN'){document.getElementById('quota-status-titulo').textContent='Rode o scan para ver quota';return}
+  const rem=q.requests_remaining??0,used=q.requests_used??0,total=q.tier_total??500;
+  const pct=Math.round(used/total*100);
+  document.getElementById('q-remaining').textContent=rem;
+  document.getElementById('q-used').textContent=used;
+  document.getElementById('q-dias').textContent=q.dias_restantes_mes??'--';
+  document.getElementById('q-budget').textContent=(q.budget_por_dia??'--')+'/dia';
+  document.getElementById('q-usado-label').textContent=`${used} usadas (${pct}%)`;
+  document.getElementById('q-restante-label').textContent=`${rem} restantes`;
+  const bar=document.getElementById('q-bar');
+  bar.style.width=pct+'%';
+  bar.className='progress-fill '+(q.status==='SAFE'?'safe':q.status==='WARNING'?'warning':'critical');
+  const extra=q.budget_por_dia?Math.max(0,Math.floor(q.budget_por_dia/10)-1):0;
+  document.getElementById('q-extra').textContent=extra>0?extra+' scans extras':'0';
+  if(q.ultimo_scan)document.getElementById('q-ultimo').textContent=new Date(q.ultimo_scan).toLocaleString('pt-BR');
+  if(q.ultimo_scan)document.getElementById('quota-atualizado').textContent='Atualizado: '+new Date(q.ultimo_scan).toLocaleString('pt-BR');
+  const bloco=document.getElementById('quota-status-bloco'),titulo=document.getElementById('quota-status-titulo'),desc=document.getElementById('quota-status-desc');
+  if(q.status==='SAFE'){bloco.style.cssText='padding:14px;border-radius:8px;background:#14532d;border-left:3px solid #22c55e';titulo.style.color='#4ade80';titulo.textContent='SAFE';desc.textContent=`${rem} req restantes. Budget de ${q.budget_por_dia} req/dia.`}
+  else if(q.status==='WARNING'){bloco.style.cssText='padding:14px;border-radius:8px;background:#451a03;border-left:3px solid #f59e0b';titulo.style.color='#fb923c';titulo.textContent='WARNING — Modere scans extras';desc.textContent=`${rem} req e ${q.dias_restantes_mes} dias restantes.`}
+  else{bloco.style.cssText='padding:14px;border-radius:8px;background:#450a0a;border-left:3px solid #ef4444';titulo.style.color='#f87171';titulo.textContent='CRITICAL — Crie novo login';desc.textContent=`Apenas ${rem} req. Crie novo login em the-odds-api.com.`}
+}).catch(()=>{});
 
-      for(const j of njogos){
-        const isSel=j.selecionado;
-        const fav=j.favorito||'';
-        const hFav=j.home_team===fav;
-        const aFav=j.away_team===fav;
-
-        const oddH=j.odd_home||0;
-        const oddD=j.odd_draw||0;
-        const oddA=j.odd_away||0;
-
-        const dataJogo=fmtData(j.start_time);
-        const horaJogo=fmtHora(j.start_time);
-
-        const tags=[];
-        if(isSel) tags.push(`<span class="badge sel">SELECIONADO</span>`);
-        if(isSel&&j.score) tags.push(`<span style="font-size:.72rem;color:#60a5fa">Score: ${j.score}/100</span>`);
-        if(isSel&&j.form_jogos_analisados>0) tags.push(`<span style="font-size:.72rem;color:#94a3b8">Forma: ${j.form_vitorias}/5</span>`);
-        if(isSel&&!j.form_jogos_analisados) tags.push(`<span style="font-size:.7rem;color:#475569">Sem dados de forma</span>`);
-        if(j.status_filtro==='FORA_RANGE'&&!isSel) tags.push(`<span style="font-size:.7rem;color:#475569">Odd fora do filtro</span>`);
-        if(j.status_filtro==='SEM_ODDS') tags.push(`<span style="font-size:.7rem;color:#475569">Poucas casas</span>`);
-
-        html+=`<div class="match-card ${isSel?'selecionado':''}">
-          <div class="match-hora">
-            ${horaJogo}
-            <span class="dia">${dataJogo}</span>
-          </div>
-          <div class="match-times">
-            <div class="team ${hFav?'fav':''}">${j.home_team}</div>
-            <div class="team ${aFav?'fav':''}">${j.away_team}</div>
-            <div class="match-tags">${tags.join('')}</div>
-          </div>
-          <div class="match-odds">
-            <div class="odd-box ${hFav&&isSel?'destaque':''}">
-              <span class="odd-label">Casa</span>
-              <span class="odd-val">${oddH||'--'}</span>
-            </div>
-            <div class="odd-box">
-              <span class="odd-label">Emp</span>
-              <span class="odd-val">${oddD||'--'}</span>
-            </div>
-            <div class="odd-box ${aFav&&isSel?'destaque':''}">
-              <span class="odd-label">Fora</span>
-              <span class="odd-val">${oddA||'--'}</span>
-            </div>
-          </div>
-        </div>`;
-      }
-      html+='</div>';
-    }
-    document.getElementById('grade-container').innerHTML=html;
-  }).catch(()=>{
-    document.getElementById('grade-container').innerHTML=
-      '<div class="empty">Erro ao carregar grade. Tente rodar o scan.</div>';
-  });
-}
-carregarGrade();
-
-// ============================================================
-// BOTAO SCAN
-// ============================================================
-let scanPollInterval=null;
-
+// ── SCAN ──
 function rodarScan(){
-  const btns=[document.getElementById('btn-scan'),document.getElementById('btn-scan2')];
-  const msgs=[document.getElementById('scan-msg'),document.getElementById('scan-msg2')];
-
-  btns.forEach(b=>{if(b){b.disabled=true;b.classList.add('loading')}});
-  msgs.forEach(m=>{if(m){m.textContent='Iniciando scan...';m.className='scan-msg info show'}});
-
+  const btn=document.getElementById('btn-scan');
+  const msg=document.getElementById('scan-msg');
+  if(btn){btn.disabled=true;btn.textContent='Rodando...'}
+  if(msg){msg.textContent='Buscando jogos (~60s)...';msg.style.color='#94a3b8'}
   fetch('/api/scan',{method:'POST'}).then(r=>r.json()).then(d=>{
-    if(d.status==='already_running'){
-      msgs.forEach(m=>{if(m){m.textContent='Scan ja em execucao. Aguarde.';m.className='scan-msg warn show'}});
-      btns.forEach(b=>{if(b){b.disabled=false;b.classList.remove('loading')}});
-      return;
-    }
-    msgs.forEach(m=>{if(m){m.textContent='Scan iniciado. Buscando jogos (~60s)...';m.className='scan-msg info show'}});
-    // Polling de status
-    scanPollInterval=setInterval(()=>{
+    if(d.status==='already_running'){if(msg)msg.textContent='Scan ja em execucao.';if(btn){btn.disabled=false;btn.textContent='Rodar Scan Agora'}return}
+    _scanPoll=setInterval(()=>{
       fetch('/api/scan_status').then(r=>r.json()).then(s=>{
         if(!s.running){
-          clearInterval(scanPollInterval);
-          btns.forEach(b=>{if(b){b.disabled=false;b.classList.remove('loading')}});
-          msgs.forEach(m=>{if(m){m.textContent='Scan concluido! Recarregando dados...';m.className='scan-msg ok show'}});
+          clearInterval(_scanPoll);
+          if(btn){btn.disabled=false;btn.textContent='Rodar Scan Agora'}
+          if(msg){msg.textContent='Concluido! Recarregando...';msg.style.color='#4ade80'}
           setTimeout(()=>location.reload(),1500);
         }
       });
     },3000);
-  }).catch(()=>{
-    btns.forEach(b=>{if(b){b.disabled=false;b.classList.remove('loading')}});
-    msgs.forEach(m=>{if(m){m.textContent='Erro ao iniciar scan.';m.className='scan-msg err show'}});
-  });
+  }).catch(()=>{if(btn){btn.disabled=false;btn.textContent='Rodar Scan Agora'}if(msg)msg.textContent='Erro ao iniciar.'});
 }
 
-// ============================================================
-// TAB QUOTA
-// ============================================================
-fetch('/api/quota').then(r=>r.json()).then(q=>{
-  if(!q||q.status==='UNKNOWN'){
-    document.getElementById('quota-status-titulo').textContent='Sem dados de quota';
-    document.getElementById('quota-status-desc').textContent='Rode o scan para atualizar.';
-    return;
-  }
-
-  const rem=q.requests_remaining??0;
-  const used=q.requests_used??0;
-  const total=q.tier_total??500;
-  const pct=Math.round(used/total*100);
-  const status=q.status||'UNKNOWN';
-
-  document.getElementById('q-remaining').textContent=rem;
-  document.getElementById('q-used').textContent=used;
-  document.getElementById('q-dias').textContent=q.dias_restantes_mes??'--';
-  document.getElementById('q-budget').textContent=(q.budget_por_dia??'--')+' req/dia';
-  document.getElementById('q-usado-label').textContent=`${used} usadas (${pct}%)`;
-  document.getElementById('q-restante-label').textContent=`${rem} restantes`;
-
-  const bar=document.getElementById('q-bar');
-  bar.style.width=pct+'%';
-  bar.className='progress-fill '+(status==='SAFE'?'safe':status==='WARNING'?'warning':'critical');
-
-  const extra=q.budget_por_dia?Math.max(0,Math.floor(q.budget_por_dia/10)-1):0;
-  document.getElementById('q-extra-hoje').textContent=extra>0?extra+' scans extras':'0 (use apenas o automatico)';
-
-  if(q.ultimo_scan){
-    const d=new Date(q.ultimo_scan);
-    document.getElementById('q-ultimo').textContent=d.toLocaleString('pt-BR');
-    document.getElementById('quota-atualizado').textContent='Atualizado em: '+d.toLocaleString('pt-BR');
-  }
-
-  const bloco=document.getElementById('quota-status-bloco');
-  const titulo=document.getElementById('quota-status-titulo');
-  const desc=document.getElementById('quota-status-desc');
-
-  if(status==='SAFE'){
-    bloco.style.background='#14532d'; bloco.style.borderLeft='3px solid #22c55e';
-    titulo.style.color='#4ade80'; titulo.textContent='SAFE — Uso dentro do esperado';
-    desc.textContent=`Voce tem ${rem} requisicoes restantes e um budget de ${q.budget_por_dia} req/dia. Continue com o scan automatico diario sem preocupacao.`;
-  } else if(status==='WARNING'){
-    bloco.style.background='#451a03'; bloco.style.borderLeft='3px solid #f59e0b';
-    titulo.style.color='#fb923c'; titulo.textContent='WARNING — Uso moderado necessario';
-    desc.textContent=`Restam ${rem} requisicoes e ${q.dias_restantes_mes} dias no mes. Evite rodar scans extras alem do automatico.`;
-  } else {
-    bloco.style.background='#450a0a'; bloco.style.borderLeft='3px solid #ef4444';
-    titulo.style.color='#f87171'; titulo.textContent='CRITICAL — Quota quase esgotada';
-    desc.textContent=`Apenas ${rem} requisicoes restantes. Crie um novo login em the-odds-api.com para obter 500 req adicionais.`;
-  }
-}).catch(()=>{
-  document.getElementById('quota-status-titulo').textContent='Erro ao carregar quota';
-});
+// ── INICIALIZA ──
+carregarBanca();
 </script>
 </body>
 </html>
