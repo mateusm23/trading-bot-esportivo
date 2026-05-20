@@ -67,7 +67,7 @@
     {
       "name": "Copa Libertadores",
       "country": "South America",
-      "odds_api_key": "soccer_conmebol_libertadores",
+      "odds_api_key": "soccer_conmebol_copa_libertadores",
       "football_data_code": "CLI",
       "api_football_id": 13,
       "active": true

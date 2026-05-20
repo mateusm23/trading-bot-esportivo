@@ -26,7 +26,7 @@ from core.scheduler import DailyScheduler
 from alerts.telegram_bot import TelegramBot
 from dashboard.app import start_in_thread
 
-SCAN_INTERVAL = 300       # segundos entre varreduras (5 min)
+SCAN_INTERVAL = 7200      # segundos entre varreduras (2h) — respeita cota de 500 req/mês
 KICKOFF_WINDOW = 90       # minutos antes do jogo para enviar alerta
 LEAGUES_PATH = os.path.join(os.path.dirname(__file__), "data", "leagues.json")
 
@@ -88,6 +88,13 @@ def main() -> None:
                 logger.warning("Stop diario ativo — aguardando proximo ciclo sem buscar mercados")
                 time.sleep(SCAN_INTERVAL)
                 continue
+
+            # Para se a cota da API estiver zerada
+            if odds_client.requests_remaining is not None and odds_client.requests_remaining <= 0:
+                msg = "AVISO: cota da The Odds API esgotada. Bot pausado ate o proximo mes."
+                logger.warning(msg)
+                telegram.send(msg, tipo_alerta="SISTEMA")
+                break
 
             logger.info("--- Nova varredura ---")
             markets = odds_client.get_active_markets(sport_keys)
