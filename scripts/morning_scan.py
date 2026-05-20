@@ -187,6 +187,7 @@ def main() -> None:
                     grade_entry["selecionado"] = True
                     grade_entry["score"] = result["score"]
                     grade_entry["motivo"] = result["motivo"]
+                    grade_entry["form_jogos_analisados"] = result["form"].get("jogos_analisados", 0)
                     grade_entry["form_vitorias"] = result["form"].get("vitorias_recentes", 0)
                     selecoes.append(parsed)
             else:
@@ -248,6 +249,7 @@ def main() -> None:
                 "num_bookmakers": s.get("num_bookmakers", 0),
                 "score": s.get("score", 0),
                 "motivo": s.get("motivo", ""),
+                "form_jogos_analisados": s.get("form", {}).get("jogos_analisados", 0),
                 "form_vitorias": s.get("form", {}).get("vitorias_recentes", 0),
                 "form_media_gols_sofridos": s.get("form", {}).get("media_gols_sofridos", 0.0),
             }

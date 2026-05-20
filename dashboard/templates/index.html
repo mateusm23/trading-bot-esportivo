@@ -328,7 +328,7 @@ fetch('/api/selecoes_hoje').then(r=>r.json()).then(data=>{
       <td><strong>${s.event}</strong><br><span class="sub-txt">${s.competition}</span></td>
       <td>${s.favorito}<br><strong>${s.odd_favorito}</strong></td>
       <td>${sbar(s.score)}</td>
-      <td class="sub-txt">${s.form_vitorias!==undefined?s.form_vitorias+'/5':s.motivo||'--'}</td>
+      <td class="sub-txt">${s.form_jogos_analisados>0?s.form_vitorias+'/5 vitorias':'sem dados de forma'}</td>
       <td>${s.num_bookmakers}</td>
     </tr>`).join('')}</tbody>
   </table>`;
@@ -446,7 +446,8 @@ function carregarGrade(){
         const tags=[];
         if(isSel) tags.push(`<span class="badge sel">SELECIONADO</span>`);
         if(isSel&&j.score) tags.push(`<span style="font-size:.72rem;color:#60a5fa">Score: ${j.score}/100</span>`);
-        if(isSel&&j.form_vitorias!==undefined) tags.push(`<span style="font-size:.72rem;color:#94a3b8">Forma: ${j.form_vitorias}/5</span>`);
+        if(isSel&&j.form_jogos_analisados>0) tags.push(`<span style="font-size:.72rem;color:#94a3b8">Forma: ${j.form_vitorias}/5</span>`);
+        if(isSel&&!j.form_jogos_analisados) tags.push(`<span style="font-size:.7rem;color:#475569">Sem dados de forma</span>`);
         if(j.status_filtro==='FORA_RANGE'&&!isSel) tags.push(`<span style="font-size:.7rem;color:#475569">Odd fora do filtro</span>`);
         if(j.status_filtro==='SEM_ODDS') tags.push(`<span style="font-size:.7rem;color:#475569">Poucas casas</span>`);
 

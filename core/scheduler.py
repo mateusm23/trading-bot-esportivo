@@ -71,14 +71,19 @@ def _montar_grade_filtrados(markets_aprovados: list[dict]) -> str:
     for m in sorted(markets_aprovados, key=lambda j: j.get("score", 0), reverse=True):
         horario = _formatar_horario(m.get("start_time", ""))
         form = m.get("form", {})
-        vitorias = form.get("vitorias_recentes", m.get("form_vitorias", "?"))
-        gols = form.get("media_gols_sofridos", m.get("form_media_gols_sofridos", "?"))
+        jogos_analisados = form.get("jogos_analisados", m.get("form_jogos_analisados", 0))
+        if jogos_analisados and jogos_analisados > 0:
+            vitorias = form.get("vitorias_recentes", m.get("form_vitorias", "?"))
+            gols = form.get("media_gols_sofridos", m.get("form_media_gols_sofridos", "?"))
+            linha_forma = f"  Forma: {vitorias}/5 vitorias | Media gols sofridos: {gols}"
+        else:
+            linha_forma = "  Forma: sem dados (liga fora do plano gratuito)"
         linhas.append(
             f"{horario}  {m.get('event', '')}\n"
             f"  Fav: {m.get('favorito', '')} @ {m.get('odd_favorito', '')}"
             f"  |  Score: {m.get('score', 0)}/100"
             f"  |  Casas: {m.get('num_bookmakers', '')}\n"
-            f"  Forma: {vitorias}/5 vitorias | Media gols sofridos: {gols}"
+            + linha_forma
         )
     return "\n\n".join(linhas)
 
