@@ -38,6 +38,16 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
 SELECOES_PATH = os.path.join(DATA_DIR, "selecoes_hoje.json")
 
 
+def _eh_hoje(start_time: str, hoje_brt: str) -> bool:
+    """Retorna True se o jogo acontece hoje no horário BRT (UTC-3)."""
+    try:
+        dt = datetime.fromisoformat(start_time.replace("Z", "+00:00"))
+        dt_brt = dt - timedelta(hours=3)
+        return dt_brt.strftime("%Y-%m-%d") == hoje_brt
+    except Exception:
+        return False
+
+
 def main() -> None:
     logger.info("=== Job Manha iniciado ===")
     os.makedirs(DATA_DIR, exist_ok=True)
@@ -47,6 +57,7 @@ def main() -> None:
     telegram = TelegramBot(db=db)
     odds_client = OddsClient()
 
+    hoje_brt = (datetime.now(timezone.utc) - timedelta(hours=3)).strftime("%Y-%m-%d")
     leagues = _load_leagues()
     sport_keys = [lg["odds_api_key"] for lg in leagues if lg.get("active")]
 
@@ -57,8 +68,14 @@ def main() -> None:
         raw = odds_client._fetch_odds(sport_key)
         liga_nome = _sport_key_to_league(sport_key)
         for match in raw:
+            start = match.get("commence_time", "")
+
+            # Ignora jogos de outros dias
+            if not _eh_hoje(start, hoje_brt):
+                continue
+
             match["competition"] = liga_nome
-            match["start_time"] = match.get("commence_time", "")
+            match["start_time"] = start
             match["event"] = f"{match.get('home_team', '')} vs {match.get('away_team', '')}"
             todos.append(match)
 
