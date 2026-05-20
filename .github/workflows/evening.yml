@@ -1,0 +1,50 @@
+name: Coleta Noturna
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 1 * * *'    # 22h BRT (01h UTC dia seguinte)
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
+
+      - name: Criar .env
+        run: |
+          cat > .env << EOF
+          ODDS_API_KEY=${{ secrets.ODDS_API_KEY }}
+          API_FOOTBALL_KEY=${{ secrets.API_FOOTBALL_KEY }}
+          FOOTBALL_DATA_KEY=${{ secrets.FOOTBALL_DATA_KEY }}
+          TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID=${{ secrets.TELEGRAM_CHAT_ID }}
+          BANCA_INICIAL=${{ secrets.BANCA_INICIAL }}
+          STAKE_PERCENT=2.5
+          STOP_DIARIO_PERCENT=5.0
+          EOF
+
+      - name: Criar pastas
+        run: mkdir -p logs data
+
+      - name: Rodar coleta noturna
+        run: python scripts/evening_collect.py
+
+      - name: Salvar historico no repositorio
+        run: |
+          git config user.name "Trading Bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add data/historico.csv data/selecoes_hoje.json
+          git diff --staged --quiet || git commit -m "historico: $(date -u +%Y-%m-%d)"
+          git push
