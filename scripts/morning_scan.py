@@ -36,6 +36,7 @@ from alerts.telegram_bot import TelegramBot
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
 SELECOES_PATH = os.path.join(DATA_DIR, "selecoes_hoje.json")
+ODDS_SNAPSHOT_PATH = os.path.join(DATA_DIR, "odds_snapshot.json")
 
 
 def _eh_hoje(start_time: str, hoje_brt: str) -> bool:
@@ -61,8 +62,19 @@ def main() -> None:
     leagues = _load_leagues()
     sport_keys = [lg["odds_api_key"] for lg in leagues if lg.get("active")]
 
+    # Carrega snapshot de odds do dia anterior para o veto de queda de odd
+    prev_odds: dict[str, float] = {}
+    if os.path.exists(ODDS_SNAPSHOT_PATH):
+        try:
+            with open(ODDS_SNAPSHOT_PATH, encoding="utf-8") as f:
+                prev_odds = json.load(f)
+            logger.info(f"Snapshot anterior carregado: {len(prev_odds)} mercados")
+        except Exception as e:
+            logger.warning(f"Nao foi possivel carregar odds_snapshot.json: {e}")
+
     todos: list[dict] = []
     selecoes: list[dict] = []
+    snapshot_atual: dict[str, float] = {}
 
     for sport_key in sport_keys:
         raw = odds_client._fetch_odds(sport_key)
@@ -81,12 +93,22 @@ def main() -> None:
 
             parsed = odds_client._parse_match(match)
             if parsed:
-                result = analyze_match(parsed)
+                market_id = parsed.get("market_id", "")
+                prev_odd = prev_odds.get(market_id)
+                if market_id:
+                    snapshot_atual[market_id] = parsed.get("odd_favorito", 0.0)
+
+                result = analyze_match(parsed, prev_odd=prev_odd)
                 if result["status"] == "APROVADO":
                     parsed["score"] = result["score"]
                     parsed["motivo"] = result["motivo"]
                     parsed["form"] = result["form"]
                     selecoes.append(parsed)
+
+    # Salva snapshot atual de odds para uso como referencia no proximo scan
+    with open(ODDS_SNAPSHOT_PATH, "w", encoding="utf-8") as f:
+        json.dump(snapshot_atual, f, indent=2)
+    logger.info(f"Snapshot de odds salvo: {len(snapshot_atual)} mercados")
 
     logger.info(f"Total: {len(todos)} jogos | {len(selecoes)} aprovados")
 
@@ -122,6 +144,8 @@ def main() -> None:
                 "num_bookmakers": s.get("num_bookmakers", 0),
                 "score": s.get("score", 0),
                 "motivo": s.get("motivo", ""),
+                "form_vitorias": s.get("form", {}).get("vitorias_recentes", 0),
+                "form_media_gols_sofridos": s.get("form", {}).get("media_gols_sofridos", 0.0),
             }
             for s in selecoes
         ],

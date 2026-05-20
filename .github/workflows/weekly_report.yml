@@ -1,16 +1,14 @@
-name: Scan Matinal
+name: Relatorio Semanal
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 11 * * *'   # 08h BRT (11h UTC)
+    - cron: '0 12 * * 1'   # Segunda-feira 09h BRT (12h UTC)
 
 jobs:
-  scan:
+  report:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
-    permissions:
-      contents: write
+    timeout-minutes: 10
 
     steps:
       - uses: actions/checkout@v4
@@ -26,7 +24,6 @@ jobs:
         run: |
           cat > .env << EOF
           ODDS_API_KEY=${{ secrets.ODDS_API_KEY }}
-          API_FOOTBALL_KEY=${{ secrets.API_FOOTBALL_KEY }}
           FOOTBALL_DATA_KEY=${{ secrets.FOOTBALL_DATA_KEY }}
           TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID=${{ secrets.TELEGRAM_CHAT_ID }}
@@ -38,13 +35,5 @@ jobs:
       - name: Criar pastas
         run: mkdir -p logs data
 
-      - name: Rodar scan matinal
-        run: python scripts/morning_scan.py
-
-      - name: Salvar selecoes e snapshot no repositorio
-        run: |
-          git config user.name "Trading Bot"
-          git config user.email "bot@users.noreply.github.com"
-          git add data/selecoes_hoje.json data/odds_snapshot.json
-          git diff --staged --quiet || git commit -m "selecoes: $(date -u +%Y-%m-%d)"
-          git push
+      - name: Rodar relatorio semanal
+        run: python scripts/analyze_historico.py
