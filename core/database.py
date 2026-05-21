@@ -69,11 +69,12 @@ CREATE TABLE IF NOT EXISTS daily_stats (
 """
 
 _MIGRATION_COLUMNS = [
-    ("data_jogo",  "TEXT"),
-    ("start_time", "TEXT"),
-    ("home_team",  "TEXT"),
-    ("away_team",  "TEXT"),
-    ("apostado",   "INTEGER DEFAULT 1"),
+    ("data_jogo",   "TEXT"),
+    ("start_time",  "TEXT"),
+    ("home_team",   "TEXT"),
+    ("away_team",   "TEXT"),
+    ("apostado",    "INTEGER DEFAULT 1"),
+    ("clv_percent", "REAL"),
 ]
 
 
@@ -152,8 +153,10 @@ class Database:
         logger.info(f"Aposta #{trade_id} registrada: {params['jogo']} | apostado={apostado}")
         return trade_id
 
-    def atualizar_resultado_aposta(self, trade_id: int, resultado: str) -> dict:
-        """Atualiza WIN/LOSS/VOID e calcula P&L automaticamente."""
+    def atualizar_resultado_aposta(
+        self, trade_id: int, resultado: str, clv_percent: Optional[float] = None
+    ) -> dict:
+        """Atualiza WIN/LOSS/VOID e calcula P&L automaticamente. Aceita CLV opcional."""
         trade = self.get_trade(trade_id)
         if not trade:
             return {"erro": "Aposta nao encontrada"}
@@ -168,11 +171,11 @@ class Database:
         else:  # VOID / cancelada
             pnl = 0.0
 
-        sql = "UPDATE trades SET resultado=?, pnl_reais=? WHERE id=?"
+        sql = "UPDATE trades SET resultado=?, pnl_reais=?, clv_percent=? WHERE id=?"
         with self._lock, self._connect() as conn:
-            conn.execute(sql, (resultado, pnl, trade_id))
-        logger.info(f"Aposta #{trade_id} encerrada: {resultado} | P&L R${pnl:+.2f}")
-        return {"id": trade_id, "resultado": resultado, "pnl_reais": pnl}
+            conn.execute(sql, (resultado, pnl, clv_percent, trade_id))
+        logger.info(f"Aposta #{trade_id} encerrada: {resultado} | P&L R${pnl:+.2f} | CLV={clv_percent}")
+        return {"id": trade_id, "resultado": resultado, "pnl_reais": pnl, "clv_percent": clv_percent}
 
     def deletar_aposta(self, trade_id: int) -> None:
         with self._lock, self._connect() as conn:
@@ -251,6 +254,17 @@ class Database:
             pnl_hoje = dict(conn.execute(sql_hoje, (hoje,)).fetchone())["pnl_hoje"] or 0
         stop_limite = round(-banca_inicial * 0.05, 2)
 
+        # CLV medio (so apostas com CLV registrado)
+        sql_clv = """
+            SELECT AVG(clv_percent) as avg_clv, COUNT(clv_percent) as n_clv
+            FROM trades
+            WHERE apostado=1 AND clv_percent IS NOT NULL
+        """
+        with self._lock, self._connect() as conn:
+            clv_row = dict(conn.execute(sql_clv).fetchone())
+        avg_clv = round(clv_row["avg_clv"] or 0, 2)
+        n_clv = clv_row["n_clv"] or 0
+
         return {
             "banca_inicial": banca_inicial,
             "banca_atual": banca_atual,
@@ -268,6 +282,8 @@ class Database:
             "pnl_hoje": round(pnl_hoje, 2),
             "stop_limite": stop_limite,
             "stop_atingido": pnl_hoje <= stop_limite,
+            "avg_clv": avg_clv,
+            "n_clv": n_clv,
         }
 
     def get_banca_curve(self, banca_inicial: float) -> list[dict]:

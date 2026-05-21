@@ -202,6 +202,11 @@
       <div class="val" id="b-stake">R$ --</div>
       <div class="sub">2.5% da banca</div>
     </div>
+    <div class="card" id="clv-card" style="display:none">
+      <div class="lbl">CLV Medio</div>
+      <div class="val" id="b-clv">--</div>
+      <div class="sub" id="b-clv-sub">apostas medidas</div>
+    </div>
   </div>
 
   <!-- Seleções de hoje -->
@@ -221,7 +226,10 @@
 
   <!-- Histórico agrupado por data -->
   <section>
-    <h2>Historico de Apostas</h2>
+    <h2>
+      Historico de Apostas
+      <button class="btn btn-ghost btn-sm" id="btn-verify" onclick="verificarResultados()">Verificar Resultados</button>
+    </h2>
     <div id="historico-bets"></div>
   </section>
 
@@ -520,6 +528,18 @@ function carregarBanca(){
 
     document.getElementById('b-stake').textContent=fmtR(s.stake_sugerido||0);
 
+    // CLV card (so aparece quando ha dados)
+    const nClv=s.n_clv||0;
+    const avgClv=s.avg_clv||0;
+    const clvCard=document.getElementById('clv-card');
+    if(nClv>0){
+      clvCard.style.display='';
+      const elClv=document.getElementById('b-clv');
+      elClv.textContent=(avgClv>=0?'+':'')+avgClv.toFixed(2)+'%';
+      elClv.className='val '+(avgClv>0?'g':avgClv<0?'r':'');
+      document.getElementById('b-clv-sub').textContent=`${nClv} apostas medidas`;
+    }
+
     const stopDiv=document.getElementById('stop-alerta');
     stopDiv.style.display=s.stop_atingido?'block':'none';
   });
@@ -576,10 +596,11 @@ function carregarBanca(){
         const canUpdate=isApostado&&b.resultado==='PENDENTE';
         const canView=isApostado&&b.resultado!=='PENDENTE';
 
+        const clvTag=b.clv_percent!=null?` · CLV: <span class="${b.clv_percent>=0?'g':'r'}">${b.clv_percent>=0?'+':''}${Number(b.clv_percent).toFixed(1)}%</span>`:'';
         html+=`<div class="bet-row ${rowClass}">
           <div>
             <div class="bet-jogo">${b.jogo||'--'}</div>
-            <div class="bet-meta">${b.liga||'--'} · ${fmtHora(b.start_time)} · Fav: <strong>${b.favorito}</strong> @ ${b.odd_entrada} · Score: ${b.score_entrada||'--'}</div>
+            <div class="bet-meta">${b.liga||'--'} · ${fmtHora(b.start_time)} · Fav: <strong>${b.favorito}</strong> @ ${b.odd_entrada} · Score: ${b.score_entrada||'--'}${clvTag}</div>
           </div>
           <div>${badgeRes(b.resultado)}</div>
           <div style="font-size:.88rem;font-weight:600">${isApostado?fmtR(b.stake_reais):'-'}</div>
@@ -814,6 +835,31 @@ function rodarScan(){
       });
     },3000);
   }).catch(()=>{if(btn){btn.disabled=false;btn.textContent='Rodar Scan Agora'}if(msg)msg.textContent='Erro ao iniciar.'});
+}
+
+// ── TOAST ──
+function showToast(msg,cor){
+  const t=document.createElement('div');
+  const bg=cor==='ok'?'#14532d':cor==='err'?'#450a0a':'#1a1d27';
+  t.style.cssText=`position:fixed;bottom:24px;right:24px;background:${bg};border:1px solid #2d3148;border-radius:8px;padding:12px 18px;color:#e2e8f0;font-size:.85rem;font-weight:600;z-index:2000;box-shadow:0 4px 20px rgba(0,0,0,.6);transition:opacity .4s`;
+  t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),400)},3500);
+}
+
+// ── VERIFICAR RESULTADOS AUTOMATICAMENTE ──
+function verificarResultados(){
+  const btn=document.getElementById('btn-verify');
+  if(btn){btn.disabled=true;btn.textContent='Verificando...'}
+  fetch('/api/bets/auto_results',{method:'POST'})
+    .then(r=>r.json())
+    .then(d=>{
+      if(btn){btn.disabled=false;btn.textContent='Verificar Resultados'}
+      const n=d.updated||0;
+      if(n>0){showToast(`${n} aposta${n>1?'s':''} atualizada${n>1?'s':''} automaticamente`,'ok');carregarBanca();}
+      else{showToast(d.message||'Nenhuma aposta pendente para verificar');}
+    })
+    .catch(()=>{if(btn){btn.disabled=false;btn.textContent='Verificar Resultados'}showToast('Erro ao verificar resultados','err')});
 }
 
 // ── INICIALIZA ──
