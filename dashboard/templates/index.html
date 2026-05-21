@@ -161,6 +161,7 @@
   <button onclick="showTab('dashboard',this)">Dashboard</button>
   <button onclick="showTab('grade',this)">Grade de Jogos</button>
   <button onclick="showTab('quota',this)">API Quota</button>
+  <button onclick="showTab('backtest',this)">Backtest</button>
 </nav>
 
 <!-- ============================================================ TAB: GESTÃO DE BANCA ============================================================ -->
@@ -315,6 +316,52 @@
         Ultimo scan: <span id="q-ultimo">--</span>
       </div>
     </div>
+  </section>
+</div>
+
+<!-- ============================================================ TAB: BACKTEST ============================================================ -->
+<div class="tab-content" id="tab-backtest">
+  <div class="grade-header">
+    <div>
+      <h2 style="font-size:1rem;font-weight:600;color:#cbd5e1">Backtest Historico</h2>
+      <div style="font-size:.82rem;color:#64748b;margin-top:3px" id="bt-subtitulo">Carregando...</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+      <button class="btn btn-ghost" id="btn-backtest-run" onclick="rodarBacktest()">Atualizar Backtest</button>
+      <div id="bt-run-msg" style="font-size:.78rem;color:#64748b"></div>
+    </div>
+  </div>
+
+  <!-- Veredicto principal -->
+  <div id="bt-veredicto" style="margin-bottom:20px"></div>
+
+  <!-- Cards de resumo -->
+  <div class="cards" id="bt-cards"></div>
+
+  <!-- Grafico curva de equity -->
+  <section>
+    <h2>Curva de P&L Acumulada (unidades)</h2>
+    <div class="chart-wrap" style="height:280px"><canvas id="grafico-backtest"></canvas></div>
+  </section>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px">
+    <!-- Tabela por faixa de odd -->
+    <section>
+      <h2>Por Faixa de Odd</h2>
+      <div id="bt-faixas"></div>
+    </section>
+
+    <!-- Tabela por liga -->
+    <section>
+      <h2>Por Liga</h2>
+      <div id="bt-ligas"></div>
+    </section>
+  </div>
+
+  <!-- Recomendacoes -->
+  <section id="bt-recom-section" style="display:none">
+    <h2>Recomendacoes</h2>
+    <div id="bt-recomendacoes" style="padding:16px;font-size:.875rem;line-height:1.8;color:#cbd5e1"></div>
   </section>
 </div>
 
@@ -837,6 +884,149 @@ function rodarScan(){
   }).catch(()=>{if(btn){btn.disabled=false;btn.textContent='Rodar Scan Agora'}if(msg)msg.textContent='Erro ao iniciar.'});
 }
 
+// ── BACKTEST ──
+function carregarBacktest(){
+  fetch('/api/backtest').then(r=>r.json()).then(bt=>{
+    if(!bt||bt.status==='nao_executado'){
+      document.getElementById('bt-subtitulo').textContent='Nenhum backtest executado. Clique em "Atualizar Backtest".';
+      document.getElementById('bt-cards').innerHTML='<div class="empty" style="padding:40px">Rode: python scripts/backtest.py (local) ou clique no botao acima.</div>';
+      return;
+    }
+    if(bt.status==='erro'){document.getElementById('bt-subtitulo').textContent='Erro ao ler resultado.';return;}
+
+    const g=bt.geral||{};
+    const geradoEm=bt.gerado_em?new Date(bt.gerado_em).toLocaleString('pt-BR'):'--';
+    document.getElementById('bt-subtitulo').textContent=
+      `${bt.num_temporadas||0} temporadas (${bt.data_inicio||''}  ${bt.data_fim||''}) · ${g.total||0} apostas simuladas · Atualizado: ${geradoEm}`;
+
+    // Veredicto
+    const roi=g.roi||0;
+    const isPos=roi>=0;
+    const mf=bt.melhor_faixa;
+    document.getElementById('bt-veredicto').innerHTML=`
+      <div style="background:${isPos?'#14532d':'#450a0a'};border:1px solid ${isPos?'#22c55e':'#7f1d1d'};border-radius:10px;padding:16px 20px;display:flex;align-items:center;gap:16px">
+        <div style="font-size:2rem;font-weight:800;color:${isPos?'#4ade80':'#f87171'}">${roi>=0?'+':''}${roi.toFixed(2)}%</div>
+        <div>
+          <div style="font-size:.95rem;font-weight:700;color:#e2e8f0">ROI ${isPos?'POSITIVO':'NEGATIVO'} — estrategia base (sem filtros de forma)</div>
+          <div style="font-size:.82rem;color:#94a3b8;margin-top:3px">
+            ${isPos?'Base lucrativa. Filtros de forma tendem a melhorar ainda mais.':'Filtros de forma precisam recuperar essa margem.'}
+            ${mf?` Melhor faixa isolada: <strong style="color:#60a5fa">${mf.faixa}</strong> com ROI <strong style="color:${mf.roi>=0?'#4ade80':'#f87171'}">${mf.roi>=0?'+':''}${mf.roi}%</strong>.`:''}
+          </div>
+        </div>
+      </div>`;
+
+    // Cards
+    document.getElementById('bt-cards').innerHTML=`
+      <div class="card"><div class="lbl">Total Apostas</div><div class="val b">${g.total}</div><div class="sub">${bt.num_temporadas} temp · ${(bt.ligas||[]).length} ligas</div></div>
+      <div class="card"><div class="lbl">Taxa de Acerto</div><div class="val ${g.win_rate>=65?'g':g.win_rate>=55?'y':'r'}">${g.win_rate}%</div><div class="sub">${g.wins}W / ${g.losses}L</div></div>
+      <div class="card"><div class="lbl">ROI Geral</div><div class="val ${roi>=0?'g':'r'}">${roi>=0?'+':''}${roi}%</div><div class="sub">sem filtros de forma</div></div>
+      <div class="card"><div class="lbl">P&L (unidades)</div><div class="val ${g.pnl_units>=0?'g':'r'}">${g.pnl_units>=0?'+':''}${g.pnl_units}</div><div class="sub">por unit apostada</div></div>
+      <div class="card"><div class="lbl">Max Drawdown</div><div class="val r">${g.max_drawdown}u</div><div class="sub">pior sequencia</div></div>
+    `;
+
+    // Tabela por faixa
+    const faixas=bt.por_faixa||[];
+    if(faixas.length){
+      const rows=faixas.map(s=>{
+        const r=s.roi||0;
+        const isMelhor=s.melhor;
+        return `<tr style="${isMelhor?'background:#0f1a2e':''}">
+          <td style="font-weight:${isMelhor?700:400}">${s.faixa}${isMelhor?' <span class="badge sel">MELHOR</span>':''}</td>
+          <td>${s.total}</td>
+          <td class="${s.win_rate>=65?'g':s.win_rate>=55?'y':'r'}">${s.win_rate}%</td>
+          <td class="${r>=0?'g':'r'}" style="font-weight:600">${r>=0?'+':''}${r}%</td>
+        </tr>`;
+      }).join('');
+      document.getElementById('bt-faixas').innerHTML=
+        `<table><thead><tr><th>Faixa</th><th>Apostas</th><th>Acerto</th><th>ROI</th></tr></thead><tbody>${rows}</tbody></table>`;
+    }
+
+    // Tabela por liga
+    const ligas=bt.por_liga||[];
+    if(ligas.length){
+      const rows=ligas.map(s=>{
+        const r=s.roi||0;
+        return `<tr>
+          <td>${s.liga}</td>
+          <td>${s.total}</td>
+          <td class="${s.win_rate>=65?'g':s.win_rate>=55?'y':'r'}">${s.win_rate}%</td>
+          <td class="${r>=0?'g':'r'}" style="font-weight:600">${r>=0?'+':''}${r}%</td>
+        </tr>`;
+      }).join('');
+      document.getElementById('bt-ligas').innerHTML=
+        `<table><thead><tr><th>Liga</th><th>Apostas</th><th>Acerto</th><th>ROI</th></tr></thead><tbody>${rows}</tbody></table>`;
+    }
+
+    // Recomendacoes
+    const recom=[];
+    const faixasPos=faixas.filter(s=>s.roi>0&&s.total>=30);
+    const faixasNeg=faixas.filter(s=>s.roi<-5&&s.total>=30);
+    const ligasNeg=ligas.filter(s=>s.roi<-5&&s.total>=30);
+    const ligasPos=ligas.filter(s=>s.roi>0&&s.total>=30);
+    if(faixasPos.length) recom.push(`Concentre apostas nas faixas de odd lucrativas: <strong>${faixasPos.map(s=>s.faixa+' ('+s.roi+'%)').join(', ')}</strong>`);
+    if(faixasNeg.length) recom.push(`Evite apostas com odd ${faixasNeg.map(s=>s.faixa).join(', ')} — ROI historicamente negativo nessas faixas`);
+    if(ligasNeg.length)  recom.push(`Ligas com ROI negativo: <strong>${ligasNeg.map(s=>s.liga+' ('+s.roi+'%)').join(', ')}</strong> — considere desativar ou ser mais seletivo`);
+    if(ligasPos.length)  recom.push(`Ligas mais lucrativas: <strong>${ligasPos.map(s=>s.liga+' ('+s.roi+'%)').join(', ')}</strong> — priorize`);
+    if(!roi&&mf&&mf.roi>0) recom.push(`Mesmo com ROI geral negativo, a faixa ${mf.faixa} e lucrativa isoladamente (${mf.roi}%) — considere estreitar o range do modelo`);
+    if(recom.length){
+      document.getElementById('bt-recom-section').style.display='';
+      document.getElementById('bt-recomendacoes').innerHTML='<ul style="padding-left:18px">'+recom.map(r=>`<li style="margin-bottom:8px">${r}</li>`).join('')+'</ul>';
+    }
+
+    // Grafico curva de equity
+    const curve=bt.equity_curve||[];
+    if(curve.length){
+      const labels=curve.map(p=>p.data);
+      const values=curve.map(p=>p.pnl_cumul);
+      const ctx=document.getElementById('grafico-backtest').getContext('2d');
+      if(window._chartBacktest)window._chartBacktest.destroy();
+      const finalPnl=values[values.length-1]||0;
+      window._chartBacktest=new Chart(ctx,{
+        type:'line',
+        data:{labels,datasets:[{
+          label:'P&L Acumulado (u)',data:values,
+          borderColor:finalPnl>=0?'#22c55e':'#ef4444',
+          backgroundColor:finalPnl>=0?'rgba(34,197,94,.07)':'rgba(239,68,68,.07)',
+          tension:.2,fill:true,pointRadius:0,borderWidth:2,
+        },{
+          label:'Break-even',data:labels.map(()=>0),
+          borderColor:'#475569',borderDash:[4,4],pointRadius:0,borderWidth:1,
+        }]},
+        options:{
+          responsive:true,maintainAspectRatio:false,
+          scales:{
+            y:{ticks:{color:'#64748b'},grid:{color:'#1e2235'}},
+            x:{ticks:{color:'#64748b',maxTicksLimit:12,maxRotation:0},grid:{color:'#1e2235'}}
+          },
+          plugins:{legend:{labels:{color:'#94a3b8'}}}
+        }
+      });
+    }
+  }).catch(()=>{document.getElementById('bt-subtitulo').textContent='Erro ao carregar.';});
+}
+
+function rodarBacktest(){
+  const btn=document.getElementById('btn-backtest-run');
+  const msg=document.getElementById('bt-run-msg');
+  if(btn){btn.disabled=true;btn.textContent='Baixando dados...'}
+  if(msg){msg.textContent='~60s — baixa 15 CSVs do football-data.co.uk';msg.style.color='#94a3b8'}
+  fetch('/api/backtest/run',{method:'POST'}).then(r=>r.json()).then(()=>{
+    let n=0;
+    const poll=setInterval(()=>{
+      n++;
+      fetch('/api/backtest').then(r=>r.json()).then(bt=>{
+        if(bt&&bt.gerado_em){
+          clearInterval(poll);
+          if(btn){btn.disabled=false;btn.textContent='Atualizar Backtest'}
+          if(msg){msg.textContent='Concluido!';msg.style.color='#4ade80'}
+          carregarBacktest();
+        }
+      });
+      if(n>40){clearInterval(poll);if(btn){btn.disabled=false;btn.textContent='Atualizar Backtest'}}
+    },3000);
+  }).catch(()=>{if(btn){btn.disabled=false;btn.textContent='Atualizar Backtest'}});
+}
+
 // ── TOAST ──
 function showToast(msg,cor){
   const t=document.createElement('div');
@@ -864,6 +1054,7 @@ function verificarResultados(){
 
 // ── INICIALIZA ──
 carregarBanca();
+carregarBacktest();
 </script>
 </body>
 </html>

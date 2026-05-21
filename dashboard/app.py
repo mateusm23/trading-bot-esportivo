@@ -24,6 +24,7 @@ SELECOES_PATH = os.path.join(DATA_DIR, "selecoes_hoje.json")
 HISTORICO_PATH = os.path.join(DATA_DIR, "historico.csv")
 GRADE_PATH    = os.path.join(DATA_DIR, "grade_completa.json")
 QUOTA_PATH    = os.path.join(DATA_DIR, "api_quota.json")
+BACKTEST_PATH = os.path.join(DATA_DIR, "backtest_results.json")
 
 
 def init_dashboard(db: Database, bankroll: Bankroll, banca_inicial: float = 1000.0) -> None:
@@ -276,6 +277,32 @@ def api_bankroll_por_liga():
     if not _db:
         return jsonify([])
     return jsonify(_db.get_stats_por_liga())
+
+
+# ------------------------------------------------------------------
+# Backtest
+# ------------------------------------------------------------------
+
+@app.route("/api/backtest")
+def api_backtest():
+    if not os.path.exists(BACKTEST_PATH):
+        return jsonify({"status": "nao_executado"})
+    try:
+        with open(BACKTEST_PATH, encoding="utf-8") as f:
+            return jsonify(json.load(f))
+    except Exception:
+        return jsonify({"status": "erro"})
+
+
+@app.route("/api/backtest/run", methods=["POST"])
+def api_backtest_run():
+    def _run():
+        import subprocess
+        script = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "scripts", "backtest.py"))
+        root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        subprocess.run([sys.executable, script], cwd=root)
+    threading.Thread(target=_run, daemon=True).start()
+    return jsonify({"status": "started", "message": "Backtest iniciado (~60 segundos)."})
 
 
 # ------------------------------------------------------------------
