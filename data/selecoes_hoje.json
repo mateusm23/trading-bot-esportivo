@@ -1,5 +1,44 @@
 {
-  "data": "2026-05-22",
-  "total_jogos": 1,
-  "selecoes": []
+  "data": "2026-05-23",
+  "total_jogos": 28,
+  "selecoes": [
+    {
+      "market_id": "8e29a7d4435342db54013b6184ab1fd4",
+      "event": "Real Madrid vs Athletic Bilbao",
+      "competition": "La Liga - Spain",
+      "sport_key": "soccer_spain_la_liga",
+      "start_time": "2026-05-23T19:00:00Z",
+      "home_team": "Real Madrid",
+      "away_team": "Athletic Bilbao",
+      "favorito": "Real Madrid",
+      "odd_favorito": 1.487,
+      "odd_empate": 4.862,
+      "odd_zebra": 6.092,
+      "num_bookmakers": 21,
+      "score": 90,
+      "motivo": "Score 90/100 | 3/5 vitórias | 21 casas",
+      "form_jogos_analisados": 5,
+      "form_vitorias": 3,
+      "form_media_gols_sofridos": 0.6
+    },
+    {
+      "market_id": "b630995bc6d17e0d15a59bd044f9b0df",
+      "event": "Chicago Fire vs Toronto FC",
+      "competition": "MLS",
+      "sport_key": "soccer_usa_mls",
+      "start_time": "2026-05-24T00:30:00Z",
+      "home_team": "Chicago Fire",
+      "away_team": "Toronto FC",
+      "favorito": "Chicago Fire",
+      "odd_favorito": 1.466,
+      "odd_empate": 4.662,
+      "odd_zebra": 5.842,
+      "num_bookmakers": 24,
+      "score": 75,
+      "motivo": "Score 75/100 | 0/5 vitórias | 24 casas",
+      "form_jogos_analisados": 0,
+      "form_vitorias": 0,
+      "form_media_gols_sofridos": 0.0
+    }
+  ]
 }
