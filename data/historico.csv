@@ -2,3 +2,7 @@ data,event,competition,favorito,odd_favorito,score,num_bookmakers,resultado_real
 2026-05-20,Flamengo-RJ vs Estudiantes La Plata,Copa Libertadores,Flamengo-RJ,1.421,75,20,NAO_ENCONTRADO,,
 2026-05-23,Real Madrid vs Athletic Bilbao,La Liga - Spain,Real Madrid,1.487,90,21,NAO_ENCONTRADO,,-3.88
 2026-05-23,Chicago Fire vs Toronto FC,MLS,Chicago Fire,1.466,75,24,NAO_ENCONTRADO,,-0.27
+2026-05-24,Hellas Verona vs AS Roma,Serie A - Italy,AS Roma,1.356,84,24,AWAY_WIN,True,1.12
+2026-05-24,Cremonese vs Como,Serie A - Italy,Como,1.485,90,24,AWAY_WIN,True,-4.38
+2026-05-24,Columbus Crew SC vs Atlanta United FC,MLS,Columbus Crew SC,1.531,75,24,NAO_ENCONTRADO,,-1.23
+2026-05-24,Inter Miami CF vs Philadelphia Union,MLS,Inter Miami CF,1.383,71,24,NAO_ENCONTRADO,,2.44
