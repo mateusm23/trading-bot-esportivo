@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Trading Bot Esportivo</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Segoe UI',system-ui,sans-serif;background:#0f1117;color:#e2e8f0;min-height:100vh}
+
+    header{background:#1a1d27;border-bottom:1px solid #2d3148;padding:13px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+    header h1{font-size:1.1rem;font-weight:700;color:#fff}
+    .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#22c55e;margin-right:7px;animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+    #data-hora{font-size:.82rem;color:#64748b}
+
+    nav{background:#13151f;border-bottom:1px solid #2d3148;display:flex;padding:0 28px;overflow-x:auto}
+    nav button{background:none;border:none;color:#64748b;padding:13px 18px;font-size:.875rem;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap}
+    nav button:hover{color:#cbd5e1}
+    nav button.active{color:#60a5fa;border-bottom-color:#60a5fa;font-weight:600}
+
+    .tab-content{display:none;padding:22px 28px;max-width:1300px;margin:0 auto}
+    .tab-content.active{display:block}
+
+    /* HERO */
+    .hero-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:16px}
+    .hero-card{background:#1a1d27;border:1px solid #2d3148;border-radius:12px;padding:22px 24px}
+    .hero-card .lbl{font-size:.73rem;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+    .hero-card .val{font-size:2.2rem;font-weight:800;color:#fff;line-height:1.1}
+    .hero-card .sub{font-size:.83rem;color:#475569;margin-top:6px}
+
+    /* CARDS */
+    .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:13px;margin-bottom:22px}
+    .card{background:#1a1d27;border:1px solid #2d3148;border-radius:10px;padding:16px}
+    .card .lbl{font-size:.72rem;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+    .card .val{font-size:1.6rem;font-weight:700;color:#fff;line-height:1.1}
+    .card .sub{font-size:.73rem;color:#475569;margin-top:3px}
+    .g{color:#22c55e!important}.r{color:#ef4444!important}.b{color:#60a5fa!important}.y{color:#f59e0b!important}
+
+    section{background:#1a1d27;border:1px solid #2d3148;border-radius:10px;margin-bottom:20px;overflow:hidden}
+    section h2{font-size:.9rem;font-weight:600;padding:13px 18px;border-bottom:1px solid #2d3148;color:#cbd5e1;display:flex;align-items:center;justify-content:space-between;gap:12px}
+
+    table{width:100%;border-collapse:collapse;font-size:.84rem}
+    thead th{text-align:left;padding:9px 16px;background:#13151f;color:#64748b;font-weight:600;font-size:.73rem;text-transform:uppercase;letter-spacing:.4px}
+    tbody tr{border-top:1px solid #1e2235;transition:background .15s}
+    tbody tr:hover{background:#1e2235}
+    tbody td{padding:10px 16px;color:#cbd5e1;vertical-align:middle}
+
+    .badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:.71rem;font-weight:700}
+    .badge.win{background:#14532d;color:#4ade80}
+    .badge.loss{background:#450a0a;color:#f87171}
+    .badge.pend{background:#1e3a5f;color:#93c5fd}
+    .badge.void{background:#1e2235;color:#94a3b8}
+    .badge.sel{background:#1e3a5f;color:#60a5fa;border:1px solid #2d5a8e}
+
+    .sbar{display:flex;align-items:center;gap:7px}
+    .sbar .bar{flex:1;height:5px;background:#2d3148;border-radius:3px;overflow:hidden;min-width:50px}
+    .sbar .fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#3b82f6,#22c55e)}
+
+    .empty{padding:36px 16px;text-align:center;color:#475569;font-size:.88rem}
+    .sub-txt{color:#64748b;font-size:.76rem}
+    .chart-wrap{padding:18px;height:260px}
+
+    .btn{display:inline-flex;align-items:center;gap:5px;border:none;border-radius:6px;padding:7px 14px;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .18s}
+    .btn-ghost{background:#1e2235;color:#94a3b8;border:1px solid #2d3148}.btn-ghost:hover{background:#2d3148}
+    .btn-sm{padding:4px 10px;font-size:.76rem}
+
+    /* RESULTADO ROWS */
+    .res-row{display:grid;grid-template-columns:70px 1fr 130px 80px;align-items:center;gap:12px;padding:10px 16px;border-top:1px solid #1e2235;transition:background .15s}
+    .res-row:hover{background:#1e2235}
+    .res-row.win-row{border-left:4px solid #22c55e}
+    .res-row.loss-row{border-left:4px solid #ef4444}
+    .res-row.pend-row{border-left:4px solid #3b82f6;opacity:.75}
+    .res-jogo{font-size:.875rem;font-weight:600;color:#e2e8f0}
+    .res-meta{font-size:.75rem;color:#64748b;margin-top:2px}
+
+    /* SELECAO CARD */
+    .sel-card{padding:14px 16px;border-top:1px solid #1e2235;display:grid;grid-template-columns:1fr auto;align-items:center;gap:12px;transition:background .15s}
+    .sel-card:hover{background:#1e2235}
+    .sel-card.ativa{border-left:4px solid #3b82f6;background:#0a1628}
+    .sel-jogo{font-size:.9rem;font-weight:700;color:#e2e8f0}
+    .sel-meta{font-size:.78rem;color:#64748b;margin-top:3px;line-height:1.6}
+
+    /* LOCAL NOTICE */
+    .local-notice{background:#0f1a2e;border:1px solid #2d5a8e;border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:flex-start;gap:12px;font-size:.84rem;color:#93c5fd;line-height:1.6}
+    .local-notice strong{color:#60a5fa}
+    .local-notice code{background:#1e2235;padding:2px 6px;border-radius:4px;font-size:.8rem;color:#a5b4fc}
+
+    /* GRADE */
+    .grade-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px}
+    .liga-group{margin-bottom:18px;background:#1a1d27;border:1px solid #2d3148;border-radius:10px;overflow:hidden}
+    .liga-title{font-size:.75rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.6px;padding:9px 16px;background:#13151f;display:flex;align-items:center;gap:8px;border-bottom:1px solid #1e2235}
+    .match-card{display:grid;grid-template-columns:76px 1fr auto;align-items:center;gap:14px;padding:11px 16px;border-bottom:1px solid #1e2235;transition:background .15s}
+    .match-card:last-child{border-bottom:none}
+    .match-card:hover{background:#1e2235}
+    .match-card.sel{border-left:3px solid #3b82f6;background:#0f1a2e}
+    .match-hora{font-size:.84rem;font-weight:600;color:#94a3b8;text-align:center}
+    .match-hora .dia{font-size:.68rem;color:#475569;display:block;margin-top:1px}
+    .match-times .team{font-size:.88rem;color:#e2e8f0;font-weight:500;line-height:1.5}
+    .match-times .team.fav{color:#fff;font-weight:700}
+    .match-tags{display:flex;gap:4px;margin-top:4px;flex-wrap:wrap}
+    .match-odds{display:flex;gap:5px}
+    .odd-box{text-align:center;background:#13151f;border:1px solid #2d3148;border-radius:6px;padding:5px 8px;min-width:44px}
+    .odd-box .ol{font-size:.62rem;color:#475569;display:block;margin-bottom:1px}
+    .odd-box .ov{font-size:.87rem;font-weight:700;color:#e2e8f0}
+    .odd-box.dest{border-color:#3b82f6;background:#0f1a2e}
+    .odd-box.dest .ov{color:#60a5fa}
+
+    /* QUOTA */
+    .quota-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:13px;padding:16px}
+    .q-card{background:#13151f;border:1px solid #2d3148;border-radius:8px;padding:15px}
+    .q-card .ql{font-size:.72rem;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+    .q-card .qv{font-size:1.4rem;font-weight:700;color:#fff}
+    .q-card .qs{font-size:.73rem;color:#64748b;margin-top:3px}
+    .progress-wrap{padding:0 16px 16px}
+    .progress-label{display:flex;justify-content:space-between;font-size:.77rem;color:#64748b;margin-bottom:5px}
+    .progress-bar{height:9px;background:#2d3148;border-radius:5px;overflow:hidden}
+    .progress-fill{height:100%;border-radius:5px;transition:width .5s}
+    .progress-fill.safe{background:linear-gradient(90deg,#22c55e,#16a34a)}
+    .progress-fill.warning{background:linear-gradient(90deg,#f59e0b,#d97706)}
+    .progress-fill.critical{background:linear-gradient(90deg,#ef4444,#b91c1c)}
+  </style>
+</head>
+<body>
+
+<header>
+  <h1><span class="dot"></span>Trading Bot Esportivo</h1>
+  <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+    <span id="data-hora" style="font-size:.82rem;color:#64748b"></span>
+    <span id="ultima-atualizacao" style="font-size:.78rem;color:#475569"></span>
+  </div>
+</header>
+
+<nav>
+  <button class="active" onclick="showTab('hoje',this)">Hoje</button>
+  <button onclick="showTab('resultados',this)">Resultados</button>
+  <button onclick="showTab('grade',this)">Grade</button>
+  <button onclick="showTab('backtest',this)">Backtest</button>
+  <button onclick="showTab('quota',this)">Quota</button>
+</nav>
+
+<!-- ══════════════════════════════════════════ TAB: HOJE ══════════════════════════════════════════ -->
+<div class="tab-content active" id="tab-hoje">
+
+  <div class="local-notice">
+    <span style="font-size:1.1rem">&#128274;</span>
+    <div>
+      <strong>Visao publica.</strong> Dados de apostas (stakes, P&amp;L, banca) ficam no seu dispositivo e nao aparecem aqui.
+      Para registrar apostas e ver curva de banca: <code>python main.py</code> → <strong>localhost:5000</strong>
+    </div>
+  </div>
+
+  <!-- Hero stats do modelo -->
+  <div class="hero-cards" id="hoje-hero">
+    <div class="hero-card">
+      <div class="lbl">Vitorias</div>
+      <div class="val g" id="h-wins">--</div>
+      <div class="sub">acertos do modelo</div>
+    </div>
+    <div class="hero-card">
+      <div class="lbl">Derrotas</div>
+      <div class="val r" id="h-losses">--</div>
+      <div class="sub">erros do modelo</div>
+    </div>
+    <div class="hero-card">
+      <div class="lbl">Taxa de Acerto</div>
+      <div class="val" id="h-taxa">--%</div>
+      <div class="sub" id="h-taxa-sub">-- resolvidos</div>
+    </div>
+    <div class="hero-card">
+      <div class="lbl">Selecoes de Hoje</div>
+      <div class="val b" id="h-sel-hoje">--</div>
+      <div class="sub" id="h-sel-hoje-sub">jogos selecionados</div>
+    </div>
+  </div>
+
+  <!-- Selecoes de hoje -->
+  <section>
+    <h2>
+      Selecoes de Hoje
+      <span style="font-size:.75rem;color:#475569;font-weight:400" id="sel-hoje-sub">carregando...</span>
+    </h2>
+    <div id="sel-hoje-container"></div>
+  </section>
+
+  <!-- Ultimos resultados -->
+  <section>
+    <h2>Ultimos Resultados <span style="font-size:.72rem;color:#475569;font-weight:400">modelo · ultimas 15 entradas</span></h2>
+    <div id="hoje-recentes"></div>
+  </section>
+
+</div>
+
+<!-- ══════════════════════════════════════════ TAB: RESULTADOS ══════════════════════════════════════════ -->
+<div class="tab-content" id="tab-resultados">
+
+  <div class="cards" id="res-cards"></div>
+
+  <section>
+    <h2>
+      Historico Completo do Modelo
+      <span style="font-size:.75rem;color:#475569;font-weight:400" id="res-total">carregando...</span>
+    </h2>
+    <div id="res-historico"></div>
+  </section>
+
+  <section>
+    <h2>Taxa de Acerto por Dia</h2>
+    <div class="chart-wrap"><canvas id="grafico-taxa"></canvas></div>
+  </section>
+
+</div>
+
+<!-- ══════════════════════════════════════════ TAB: GRADE ══════════════════════════════════════════ -->
+<div class="tab-content" id="tab-grade">
+  <div class="grade-header">
+    <div>
+      <h2 style="font-size:1rem;font-weight:600;color:#cbd5e1">Grade — Proximas 24h</h2>
+      <div style="font-size:.82rem;color:#64748b;margin-top:3px" id="grade-info">Carregando...</div>
+    </div>
+  </div>
+  <div id="grade-container"></div>
+</div>
+
+<!-- ══════════════════════════════════════════ TAB: BACKTEST ══════════════════════════════════════════ -->
+<div class="tab-content" id="tab-backtest">
+  <div class="grade-header">
+    <div>
+      <h2 style="font-size:1rem;font-weight:600;color:#cbd5e1">Backtest Historico</h2>
+      <div style="font-size:.82rem;color:#64748b;margin-top:3px" id="bt-subtitulo">Carregando...</div>
+    </div>
+  </div>
+  <div id="bt-veredicto" style="margin-bottom:20px"></div>
+  <div class="cards" id="bt-cards"></div>
+  <section>
+    <h2>Curva de P&amp;L Acumulada (unidades)</h2>
+    <div class="chart-wrap" style="height:280px"><canvas id="grafico-backtest"></canvas></div>
+  </section>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px">
+    <section>
+      <h2>Por Faixa de Odd</h2>
+      <div id="bt-faixas"></div>
+    </section>
+    <section>
+      <h2>Por Liga</h2>
+      <div id="bt-ligas"></div>
+    </section>
+  </div>
+  <section id="bt-recom-section" style="display:none">
+    <h2>Recomendacoes</h2>
+    <div id="bt-recomendacoes" style="padding:16px;font-size:.875rem;line-height:1.8;color:#cbd5e1"></div>
+  </section>
+</div>
+
+<!-- ══════════════════════════════════════════ TAB: QUOTA ══════════════════════════════════════════ -->
+<div class="tab-content" id="tab-quota">
+  <section>
+    <h2>Uso de Requisicoes — The Odds API</h2>
+    <div class="progress-wrap">
+      <div class="progress-label"><span id="q-usado-label">--</span><span id="q-restante-label">--</span></div>
+      <div class="progress-bar"><div class="progress-fill safe" id="q-bar" style="width:0%"></div></div>
+    </div>
+    <div class="quota-grid">
+      <div class="q-card"><div class="ql">Restantes</div><div class="qv" id="q-remaining">--</div><div class="qs">de 500/mes (free)</div></div>
+      <div class="q-card"><div class="ql">Utilizadas</div><div class="qv" id="q-used">--</div><div class="qs">desde inicio do mes</div></div>
+      <div class="q-card"><div class="ql">Dias restantes</div><div class="qv" id="q-dias">--</div><div class="qs">ate virar o mes</div></div>
+      <div class="q-card"><div class="ql">Budget diario</div><div class="qv" id="q-budget">--</div><div class="qs">req/dia seguros</div></div>
+    </div>
+  </section>
+  <section>
+    <h2>Status</h2>
+    <div style="padding:16px">
+      <div id="quota-status-bloco" style="padding:14px;border-radius:8px;background:#1e2235;margin-bottom:12px">
+        <div style="font-size:.95rem;font-weight:700;margin-bottom:5px" id="quota-status-titulo">--</div>
+        <div style="font-size:.83rem;color:#94a3b8" id="quota-status-desc">--</div>
+      </div>
+      <div style="font-size:.8rem;color:#64748b;line-height:1.8">
+        Ultimo scan: <span id="q-ultimo">--</span>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+// ── UTILS ──
+function tick(){
+  const n=new Date();
+  document.getElementById('data-hora').textContent=
+    n.toLocaleDateString('pt-BR')+'  '+n.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+}
+tick(); setInterval(tick,15000);
+
+function showTab(id,btn){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function fmtHora(iso){if(!iso)return '--';try{return new Date(iso).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}catch{return '--'}}
+function fmtData(iso){if(!iso)return '--';try{return new Date(iso).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})}catch{return '--'}}
+function fmtDataLonga(s){if(!s)return '--';const[y,m,d]=s.split('-');return `${d}/${m}/${y}`}
+function sbar(sc){const p=Math.min(100,Math.max(0,sc||0));return `<div class="sbar"><span>${sc||'--'}</span><div class="bar"><div class="fill" style="width:${p}%"></div></div></div>`}
+
+// CSV simples (sem campos com virgulas internas)
+function parseCSV(text){
+  const lines=text.trim().split('\n').filter(l=>l.trim());
+  if(!lines.length)return[];
+  const headers=lines[0].split(',').map(h=>h.trim());
+  return lines.slice(1).map(line=>{
+    const vals=line.split(',');
+    const obj={};
+    headers.forEach((h,i)=>obj[h]=(vals[i]||'').trim());
+    return obj;
+  });
+}
+
+// ── CARREGAR HISTÓRICO (csv) ──
+let _historico = [];
+
+function carregarHistorico(){
+  return fetch('data/historico.csv')
+    .then(r=>r.text())
+    .then(txt=>{
+      _historico=parseCSV(txt).reverse(); // mais recente primeiro
+      renderResultados();
+      renderHojeRecentes();
+      renderHojeStats();
+    })
+    .catch(()=>{
+      document.getElementById('res-historico').innerHTML='<div class="empty">Historico ainda nao disponivel.</div>';
+    });
+}
+
+function renderResultados(){
+  const wins=_historico.filter(r=>r.favorito_ganhou==='True').length;
+  const losses=_historico.filter(r=>r.favorito_ganhou==='False').length;
+  const pend=_historico.filter(r=>!r.favorito_ganhou||r.favorito_ganhou==='').length;
+  const res=wins+losses;
+  const taxa=res>0?Math.round(wins/res*100):0;
+
+  // Streak
+  let streak=0,streakTipo='';
+  for(const r of _historico){
+    if(!r.favorito_ganhou||r.favorito_ganhou==='')break;
+    const isW=r.favorito_ganhou==='True';
+    if(streak===0){streak=1;streakTipo=isW?'WIN':'LOSS';}
+    else if((streakTipo==='WIN'&&isW)||(streakTipo==='LOSS'&&!isW))streak++;
+    else break;
+  }
+
+  document.getElementById('res-cards').innerHTML=`
+    <div class="card"><div class="lbl">Vitorias</div><div class="val g">${wins}</div><div class="sub">favorito ganhou</div></div>
+    <div class="card"><div class="lbl">Derrotas</div><div class="val r">${losses}</div><div class="sub">favorito perdeu</div></div>
+    <div class="card"><div class="lbl">Taxa Acerto</div><div class="val ${taxa>=65?'g':taxa>=55?'y':'r'}">${taxa}%</div><div class="sub">${res} resolvidos</div></div>
+    <div class="card"><div class="lbl">Pendentes</div><div class="val b">${pend}</div><div class="sub">aguardando resultado</div></div>
+    <div class="card"><div class="lbl">Sequencia</div><div class="val ${streakTipo==='WIN'?'g':streakTipo==='LOSS'?'r':''}">${streak?streak+'x '+streakTipo:'--'}</div><div class="sub">consecutivos</div></div>
+  `;
+  document.getElementById('res-total').textContent=`${_historico.length} entradas total`;
+
+  // Tabela flat completa
+  if(!_historico.length){
+    document.getElementById('res-historico').innerHTML='<div class="empty">Sem historico.</div>';
+    return;
+  }
+
+  // Agrupa por data para separadores
+  let html='';
+  let lastData='';
+  for(const r of _historico){
+    const data=r.data||'';
+    if(data!==lastData){
+      // Calcular stats do dia
+      const doDia=_historico.filter(x=>x.data===data);
+      const dW=doDia.filter(x=>x.favorito_ganhou==='True').length;
+      const dL=doDia.filter(x=>x.favorito_ganhou==='False').length;
+      html+=`<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 16px;background:#13151f;border-bottom:1px solid #1e2235;border-top:${lastData?'1px solid #2d3148':'none'}">
+        <span style="font-size:.85rem;font-weight:700;color:#94a3b8">${fmtDataLonga(data)}</span>
+        <div style="display:flex;gap:8px;font-size:.78rem">
+          <span>${doDia.length} entrada${doDia.length>1?'s':''}</span>
+          ${dW?`<span class="g">${dW}W</span>`:''}
+          ${dL?`<span class="r">${dL}L</span>`:''}
+        </div>
+      </div>`;
+      lastData=data;
+    }
+    const isW=r.favorito_ganhou==='True';
+    const isL=r.favorito_ganhou==='False';
+    const rowClass=isW?'win-row':isL?'loss-row':'pend-row';
+    const badge=isW?'<span class="badge win">WIN</span>':isL?'<span class="badge loss">LOSS</span>':'<span class="badge pend">PENDENTE</span>';
+    const clv=r.clv_percent&&r.clv_percent!==''
+      ?` &middot; CLV <span class="${parseFloat(r.clv_percent)>=0?'g':'r'}">${parseFloat(r.clv_percent)>=0?'+':''}${parseFloat(r.clv_percent).toFixed(1)}%</span>`
+      :'';
+
+    html+=`<div class="res-row ${rowClass}">
+      <div style="font-size:.8rem;color:#64748b;font-weight:600">${fmtDataLonga(r.data)}</div>
+      <div>
+        <div class="res-jogo">${r.event||'--'}</div>
+        <div class="res-meta">${r.competition||'--'} &middot; Fav: <strong>${r.favorito}</strong> @ ${r.odd_favorito} &middot; Score: ${r.score||'--'}${clv}</div>
+      </div>
+      <div>${badge}</div>
+      <div style="font-size:.78rem;color:#475569">${r.resultado_real||'--'}</div>
+    </div>`;
+  }
+  document.getElementById('res-historico').innerHTML=html;
+
+  // Grafico taxa por dia
+  const pd={};
+  for(const r of [..._historico].reverse()){
+    if(!pd[r.data])pd[r.data]={a:0,e:0};
+    if(r.favorito_ganhou==='True')pd[r.data].a++;
+    if(r.favorito_ganhou==='False')pd[r.data].e++;
+  }
+  const dias=Object.keys(pd).sort();
+  const txs=dias.map(d=>{const{a,e}=pd[d];return(a+e)>0?Math.round(a/(a+e)*100):null});
+  if(dias.length>1){
+    const ctx=document.getElementById('grafico-taxa').getContext('2d');
+    new Chart(ctx,{
+      type:'line',
+      data:{labels:dias,datasets:[{
+        label:'Taxa de acerto (%)',data:txs,
+        borderColor:'#3b82f6',backgroundColor:'rgba(59,130,246,.07)',
+        tension:.35,fill:true,spanGaps:true,
+        pointBackgroundColor:txs.map(t=>t===null?'#475569':t>=65?'#22c55e':t>=55?'#f59e0b':'#ef4444'),
+        pointRadius:5
+      }]},
+      options:{responsive:true,maintainAspectRatio:false,
+        scales:{y:{min:0,max:100,ticks:{color:'#64748b',callback:v=>v+'%'},grid:{color:'#1e2235'}},x:{ticks:{color:'#64748b'},grid:{color:'#1e2235'}}},
+        plugins:{legend:{labels:{color:'#94a3b8'}}}}
+    });
+  }
+}
+
+function renderHojeRecentes(){
+  const rec=_historico.slice(0,15);
+  if(!rec.length){
+    document.getElementById('hoje-recentes').innerHTML='<div class="empty">Sem historico ainda.</div>';
+    return;
+  }
+  let html='';
+  for(const r of rec){
+    const isW=r.favorito_ganhou==='True',isL=r.favorito_ganhou==='False';
+    const rowClass=isW?'win-row':isL?'loss-row':'pend-row';
+    const badge=isW?'<span class="badge win">WIN</span>':isL?'<span class="badge loss">LOSS</span>':'<span class="badge pend">PENDENTE</span>';
+    html+=`<div class="res-row ${rowClass}">
+      <div style="font-size:.8rem;color:#64748b;font-weight:600">${fmtDataLonga(r.data)}</div>
+      <div>
+        <div class="res-jogo">${r.event||'--'}</div>
+        <div class="res-meta">${r.competition||'--'} &middot; Fav: <strong>${r.favorito}</strong> @ ${r.odd_favorito}</div>
+      </div>
+      <div>${badge}</div>
+      <div></div>
+    </div>`;
+  }
+  document.getElementById('hoje-recentes').innerHTML=html;
+}
+
+function renderHojeStats(){
+  const wins=_historico.filter(r=>r.favorito_ganhou==='True').length;
+  const losses=_historico.filter(r=>r.favorito_ganhou==='False').length;
+  const res=wins+losses;
+  const taxa=res>0?Math.round(wins/res*100):0;
+  document.getElementById('h-wins').textContent=wins;
+  document.getElementById('h-losses').textContent=losses;
+  const tEl=document.getElementById('h-taxa');
+  tEl.textContent=taxa+'%';
+  tEl.className='val '+(taxa>=65?'g':taxa>=55?'y':'r');
+  document.getElementById('h-taxa-sub').textContent=res+' resolvidos';
+}
+
+// ── SELECOES DE HOJE ──
+fetch('data/selecoes_hoje.json')
+  .then(r=>r.json())
+  .then(data=>{
+    const sels=data.selecoes||[];
+    document.getElementById('h-sel-hoje').textContent=sels.length;
+    document.getElementById('h-sel-hoje-sub').textContent=sels.length?'aprovadas hoje':'nenhuma aprovada';
+    document.getElementById('sel-hoje-sub').textContent=
+      sels.length?`${sels.length} selecao${sels.length>1?'es':''} aprovada${sels.length>1?'s':''}`:'0 selecoes';
+
+    if(data.data){
+      document.getElementById('ultima-atualizacao').textContent=
+        'Dados de: '+fmtDataLonga(data.data);
+    }
+
+    const el=document.getElementById('sel-hoje-container');
+    if(!sels.length){
+      el.innerHTML='<div class="empty">Nenhuma selecao aprovada hoje. Aguarde o scan das 8h.</div>';
+      return;
+    }
+    el.innerHTML=sels.map(s=>`
+      <div class="sel-card ativa">
+        <div>
+          <div class="sel-jogo">${s.event}</div>
+          <div class="sel-meta">
+            ${s.competition} &middot; <strong>${fmtHora(s.start_time)}</strong>
+            &middot; Fav: <strong style="color:#60a5fa">${s.favorito}</strong> @ <strong>${s.odd_favorito}</strong>
+            &middot; Score: <strong>${s.score}/100</strong>
+            &middot; ${s.form_jogos_analisados>0?s.form_vitorias+'/5 vitórias':'sem dados de forma'}
+            &middot; ${s.num_bookmakers} casas
+          </div>
+        </div>
+        <div>
+          <div style="text-align:right">
+            <div style="font-size:1.4rem;font-weight:800;color:#60a5fa">${s.odd_favorito}</div>
+            <div style="font-size:.7rem;color:#475569">odd favorito</div>
+          </div>
+        </div>
+      </div>`).join('');
+  })
+  .catch(()=>{
+    document.getElementById('sel-hoje-container').innerHTML='<div class="empty">Nenhuma selecao disponivel ainda.</div>';
+    document.getElementById('h-sel-hoje').textContent='0';
+  });
+
+// ── GRADE ──
+fetch('data/grade_completa.json')
+  .then(r=>r.json())
+  .then(data=>{
+    const jogos=data.jogos||[];
+    document.getElementById('grade-info').textContent=
+      `${data.total_jogos||0} jogos · ${data.total_selecionados||0} selecionados · Janela: proximas 24h`;
+    if(!jogos.length){document.getElementById('grade-container').innerHTML='<div class="empty">Aguarde o proximo scan matinal.</div>';return}
+    const pg={};
+    for(const j of jogos){const l=j.liga||'Outra';if(!pg[l])pg[l]=[];pg[l].push(j)}
+    const ligas=Object.keys(pg).sort((a,b)=>{const as=pg[a].some(j=>j.selecionado)?1:0,bs=pg[b].some(j=>j.selecionado)?1:0;return bs-as||a.localeCompare(b)});
+    let html='';
+    for(const liga of ligas){
+      const nj=pg[liga],ns=nj.filter(j=>j.selecionado).length;
+      html+=`<div class="liga-group"><div class="liga-title"><span style="flex:1">${liga.toUpperCase()}</span>${ns?`<span class="badge sel">${ns} sel.</span>`:''}<span style="color:#475569;font-size:.72rem">${nj.length} jogo${nj.length>1?'s':''}</span></div>`;
+      for(const j of nj){
+        const isSel=j.selecionado,fav=j.favorito||'',hFav=j.home_team===fav,aFav=j.away_team===fav;
+        const tags=[];
+        if(isSel)tags.push(`<span class="badge sel">SELECIONADO</span>`);
+        if(isSel&&j.score)tags.push(`<span style="font-size:.7rem;color:#60a5fa">Score: ${j.score}/100</span>`);
+        if(isSel&&j.form_jogos_analisados>0)tags.push(`<span style="font-size:.7rem;color:#94a3b8">Forma: ${j.form_vitorias}/5</span>`);
+        if(j.status_filtro==='FORA_RANGE'&&!isSel)tags.push(`<span style="font-size:.68rem;color:#475569">Odd fora do filtro</span>`);
+        if(j.status_filtro==='SEM_ODDS')tags.push(`<span style="font-size:.68rem;color:#475569">Poucas casas</span>`);
+        html+=`<div class="match-card ${isSel?'sel':''}">
+          <div class="match-hora">${fmtHora(j.start_time)}<span class="dia">${fmtData(j.start_time)}</span></div>
+          <div class="match-times">
+            <div class="team ${hFav?'fav':''}">${j.home_team}</div>
+            <div class="team ${aFav?'fav':''}">${j.away_team}</div>
+            <div class="match-tags">${tags.join('')}</div>
+          </div>
+          <div class="match-odds">
+            <div class="odd-box ${hFav&&isSel?'dest':''}"><span class="ol">Casa</span><span class="ov">${j.odd_home||'--'}</span></div>
+            <div class="odd-box"><span class="ol">Emp</span><span class="ov">${j.odd_draw||'--'}</span></div>
+            <div class="odd-box ${aFav&&isSel?'dest':''}"><span class="ol">Fora</span><span class="ov">${j.odd_away||'--'}</span></div>
+          </div>
+        </div>`;
+      }
+      html+='</div>';
+    }
+    document.getElementById('grade-container').innerHTML=html;
+  })
+  .catch(()=>{document.getElementById('grade-container').innerHTML='<div class="empty">Erro ao carregar grade.</div>'});
+
+// ── QUOTA ──
+fetch('data/api_quota.json')
+  .then(r=>r.json())
+  .then(q=>{
+    if(!q||q.status==='UNKNOWN'){document.getElementById('quota-status-titulo').textContent='Dados de quota nao disponiveis';return}
+    const rem=q.requests_remaining??0,used=q.requests_used??0,total=q.tier_total??500;
+    const pct=Math.round(used/total*100);
+    document.getElementById('q-remaining').textContent=rem;
+    document.getElementById('q-used').textContent=used;
+    document.getElementById('q-dias').textContent=q.dias_restantes_mes??'--';
+    document.getElementById('q-budget').textContent=(q.budget_por_dia??'--')+'/dia';
+    document.getElementById('q-usado-label').textContent=`${used} usadas (${pct}%)`;
+    document.getElementById('q-restante-label').textContent=`${rem} restantes`;
+    const bar=document.getElementById('q-bar');
+    bar.style.width=pct+'%';
+    bar.className='progress-fill '+(q.status==='SAFE'?'safe':q.status==='WARNING'?'warning':'critical');
+    if(q.ultimo_scan)document.getElementById('q-ultimo').textContent=new Date(q.ultimo_scan).toLocaleString('pt-BR');
+    const bloco=document.getElementById('quota-status-bloco'),titulo=document.getElementById('quota-status-titulo'),desc=document.getElementById('quota-status-desc');
+    if(q.status==='SAFE'){bloco.style.cssText='padding:14px;border-radius:8px;background:#14532d;border-left:3px solid #22c55e';titulo.style.color='#4ade80';titulo.textContent='SAFE';desc.textContent=`${rem} req restantes. Budget de ${q.budget_por_dia} req/dia.`}
+    else if(q.status==='WARNING'){bloco.style.cssText='padding:14px;border-radius:8px;background:#451a03;border-left:3px solid #f59e0b';titulo.style.color='#fb923c';titulo.textContent='WARNING';desc.textContent=`${rem} req e ${q.dias_restantes_mes} dias restantes.`}
+    else{bloco.style.cssText='padding:14px;border-radius:8px;background:#450a0a;border-left:3px solid #ef4444';titulo.style.color='#f87171';titulo.textContent='CRITICAL';desc.textContent=`Apenas ${rem} req restantes.`}
+  })
+  .catch(()=>{});
+
+// ── BACKTEST ──
+fetch('data/backtest_results.json')
+  .then(r=>r.json())
+  .then(bt=>{
+    if(!bt||bt.status==='nao_executado'){
+      document.getElementById('bt-subtitulo').textContent='Backtest ainda nao executado.';
+      return;
+    }
+    const g=bt.geral||{};
+    const geradoEm=bt.gerado_em?new Date(bt.gerado_em).toLocaleString('pt-BR'):'--';
+    document.getElementById('bt-subtitulo').textContent=
+      `${bt.num_temporadas||0} temporadas · ${g.total||0} apostas simuladas · Atualizado: ${geradoEm}`;
+    const roi=g.roi||0;
+    const isPos=roi>=0;
+    const mf=bt.melhor_faixa;
+    document.getElementById('bt-veredicto').innerHTML=`
+      <div style="background:${isPos?'#14532d':'#450a0a'};border:1px solid ${isPos?'#22c55e':'#7f1d1d'};border-radius:10px;padding:16px 20px;display:flex;align-items:center;gap:16px">
+        <div style="font-size:2rem;font-weight:800;color:${isPos?'#4ade80':'#f87171'}">${roi>=0?'+':''}${roi.toFixed(2)}%</div>
+        <div>
+          <div style="font-size:.95rem;font-weight:700;color:#e2e8f0">ROI ${isPos?'POSITIVO':'NEGATIVO'}</div>
+          <div style="font-size:.82rem;color:#94a3b8;margin-top:3px">
+            ${mf?`Melhor faixa: <strong style="color:#60a5fa">${mf.faixa}</strong> com ROI <strong style="color:${mf.roi>=0?'#4ade80':'#f87171'}">${mf.roi>=0?'+':''}${mf.roi}%</strong>`:''}
+          </div>
+        </div>
+      </div>`;
+    document.getElementById('bt-cards').innerHTML=`
+      <div class="card"><div class="lbl">Total Apostas</div><div class="val b">${g.total}</div><div class="sub">${bt.num_temporadas} temp · ${(bt.ligas||[]).length} ligas</div></div>
+      <div class="card"><div class="lbl">Taxa de Acerto</div><div class="val ${g.win_rate>=65?'g':g.win_rate>=55?'y':'r'}">${g.win_rate}%</div><div class="sub">${g.wins}W / ${g.losses}L</div></div>
+      <div class="card"><div class="lbl">ROI Geral</div><div class="val ${roi>=0?'g':'r'}">${roi>=0?'+':''}${roi}%</div></div>
+      <div class="card"><div class="lbl">P&amp;L (unidades)</div><div class="val ${g.pnl_units>=0?'g':'r'}">${g.pnl_units>=0?'+':''}${g.pnl_units}</div></div>
+      <div class="card"><div class="lbl">Max Drawdown</div><div class="val r">${g.max_drawdown}u</div></div>`;
+    const faixas=bt.por_faixa||[];
+    if(faixas.length){
+      document.getElementById('bt-faixas').innerHTML=`<table><thead><tr><th>Faixa</th><th>Apostas</th><th>Acerto</th><th>ROI</th></tr></thead><tbody>${
+        faixas.map(s=>{const r=s.roi||0;return`<tr style="${s.melhor?'background:#0f1a2e':''}">
+          <td style="font-weight:${s.melhor?700:400}">${s.faixa}${s.melhor?' <span class="badge sel">MELHOR</span>':''}</td>
+          <td>${s.total}</td><td class="${s.win_rate>=65?'g':s.win_rate>=55?'y':'r'}">${s.win_rate}%</td>
+          <td class="${r>=0?'g':'r'}" style="font-weight:600">${r>=0?'+':''}${r}%</td></tr>`}).join('')
+      }</tbody></table>`;
+    }
+    const ligas=bt.por_liga||[];
+    if(ligas.length){
+      document.getElementById('bt-ligas').innerHTML=`<table><thead><tr><th>Liga</th><th>Apostas</th><th>Acerto</th><th>ROI</th></tr></thead><tbody>${
+        ligas.map(s=>{const r=s.roi||0;return`<tr>
+          <td>${s.liga}</td><td>${s.total}</td>
+          <td class="${s.win_rate>=65?'g':s.win_rate>=55?'y':'r'}">${s.win_rate}%</td>
+          <td class="${r>=0?'g':'r'}" style="font-weight:600">${r>=0?'+':''}${r}%</td></tr>`}).join('')
+      }</tbody></table>`;
+    }
+    const recom=[];
+    const faixasPos=faixas.filter(s=>s.roi>0&&s.total>=30);
+    const faixasNeg=faixas.filter(s=>s.roi<-5&&s.total>=30);
+    const ligasNeg=ligas.filter(s=>s.roi<-5&&s.total>=30);
+    if(faixasPos.length) recom.push(`Faixas lucrativas: <strong>${faixasPos.map(s=>s.faixa+' ('+s.roi+'%)').join(', ')}</strong>`);
+    if(faixasNeg.length) recom.push(`Evite odds ${faixasNeg.map(s=>s.faixa).join(', ')} — ROI negativo historicamente`);
+    if(ligasNeg.length)  recom.push(`Ligas com ROI negativo: <strong>${ligasNeg.map(s=>s.liga).join(', ')}</strong>`);
+    if(recom.length){
+      document.getElementById('bt-recom-section').style.display='';
+      document.getElementById('bt-recomendacoes').innerHTML='<ul style="padding-left:18px">'+recom.map(r=>`<li style="margin-bottom:8px">${r}</li>`).join('')+'</ul>';
+    }
+    const curve=bt.equity_curve||[];
+    if(curve.length){
+      const labels=curve.map(p=>p.data),values=curve.map(p=>p.pnl_cumul);
+      const ctx=document.getElementById('grafico-backtest').getContext('2d');
+      const finalPnl=values[values.length-1]||0;
+      new Chart(ctx,{type:'line',data:{labels,datasets:[{
+        label:'P&L Acumulado (u)',data:values,
+        borderColor:finalPnl>=0?'#22c55e':'#ef4444',
+        backgroundColor:finalPnl>=0?'rgba(34,197,94,.07)':'rgba(239,68,68,.07)',
+        tension:.2,fill:true,pointRadius:0,borderWidth:2,
+      },{label:'Break-even',data:labels.map(()=>0),borderColor:'#475569',borderDash:[4,4],pointRadius:0,borderWidth:1}]},
+      options:{responsive:true,maintainAspectRatio:false,
+        scales:{y:{ticks:{color:'#64748b'},grid:{color:'#1e2235'}},x:{ticks:{color:'#64748b',maxTicksLimit:12,maxRotation:0},grid:{color:'#1e2235'}}},
+        plugins:{legend:{labels:{color:'#94a3b8'}}}}});
+    }
+  })
+  .catch(()=>{document.getElementById('bt-subtitulo').textContent='Erro ao carregar backtest.'});
+
+// ── INICIALIZA ──
+carregarHistorico();
+</script>
+</body>
+</html>

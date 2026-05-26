@@ -25,7 +25,21 @@
     .tab-content{display:none;padding:22px 28px;max-width:1300px;margin:0 auto}
     .tab-content.active{display:block}
 
-    /* CARDS */
+    /* HERO KPI CARDS */
+    .hero-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px}
+    .hero-card{background:#1a1d27;border:1px solid #2d3148;border-radius:12px;padding:22px 24px}
+    .hero-card .lbl{font-size:.73rem;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+    .hero-card .val{font-size:2.4rem;font-weight:800;color:#fff;line-height:1.1}
+    .hero-card .sub{font-size:.83rem;color:#475569;margin-top:6px}
+
+    /* STATS BAR */
+    .stats-bar{background:#1a1d27;border:1px solid #2d3148;border-radius:10px;padding:14px 0;margin-bottom:16px;display:flex;align-items:center;flex-wrap:wrap}
+    .stat-item{flex:1;min-width:90px;text-align:center;padding:6px 16px}
+    .stat-item .sv{font-size:1.3rem;font-weight:700;color:#fff;line-height:1.2}
+    .stat-item .sl{font-size:.68rem;color:#64748b;text-transform:uppercase;letter-spacing:.4px;margin-top:2px}
+    .stat-sep{width:1px;background:#2d3148;height:36px;align-self:center;flex:0 0 1px}
+
+    /* LEGACY CARDS (other tabs) */
     .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:13px;margin-bottom:22px}
     .card{background:#1a1d27;border:1px solid #2d3148;border-radius:10px;padding:16px}
     .card .lbl{font-size:.72rem;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
@@ -71,26 +85,28 @@
     .btn-sm{padding:4px 10px;font-size:.76rem}
     .btn:disabled{opacity:.4;cursor:not-allowed}
 
-    /* DATE GROUPS (Histórico) */
-    .date-group{margin-bottom:16px;border:1px solid #2d3148;border-radius:10px;overflow:hidden}
-    .date-group-header{background:#13151f;padding:11px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer}
-    .date-group-header:hover{background:#1a1d27}
-    .date-group-header .dg-date{font-size:.88rem;font-weight:700;color:#cbd5e1}
-    .date-group-header .dg-stats{display:flex;gap:12px;font-size:.78rem;color:#64748b}
-    .date-group-header .dg-pnl{font-size:.9rem;font-weight:700}
-    .date-group-body{display:none}
-    .date-group-body.open{display:block}
+    /* HISTÓRICO FLAT — date separator */
+    .hist-sep{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 16px;background:#13151f;border-bottom:1px solid #1e2235}
+    .hist-sep .sep-date{font-size:.85rem;font-weight:700;color:#94a3b8}
+    .hist-sep .sep-hoje{font-size:.72rem;color:#60a5fa;font-weight:600;background:#1e3a5f;border-radius:4px;padding:1px 7px}
+    .hist-sep .sep-wl{display:flex;gap:8px;font-size:.78rem;color:#64748b;align-items:center}
+    .hist-sep .sep-pnl{font-size:.9rem;font-weight:700}
 
     /* BET ROW */
-    .bet-row{display:grid;grid-template-columns:1fr 130px 90px 90px 90px;align-items:center;gap:12px;padding:11px 16px;border-top:1px solid #1e2235;transition:background .15s}
+    .bet-row{display:grid;grid-template-columns:1fr 120px 88px 95px 88px;align-items:center;gap:12px;padding:11px 16px;border-top:1px solid #1e2235;transition:background .15s}
     .bet-row:hover{background:#1e2235}
-    .bet-row.win-row{border-left:3px solid #22c55e}
-    .bet-row.loss-row{border-left:3px solid #ef4444}
-    .bet-row.pend-row{border-left:3px solid #3b82f6}
-    .bet-row.nao-row{border-left:3px solid #374151;opacity:.6}
+    .bet-row.win-row{border-left:4px solid #22c55e}
+    .bet-row.loss-row{border-left:4px solid #ef4444}
+    .bet-row.pend-row{border-left:4px solid #3b82f6}
+    .bet-row.nao-row{border-left:4px solid #374151;opacity:.55}
 
     .bet-jogo{font-size:.875rem;font-weight:600;color:#e2e8f0}
-    .bet-meta{font-size:.75rem;color:#64748b;margin-top:2px}
+    .bet-meta{font-size:.75rem;color:#64748b;margin-top:2px;line-height:1.5}
+
+    /* SELEÇÕES ROW (reutiliza bet-row) */
+    .sel-row{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:16px;padding:12px 16px;border-top:1px solid #1e2235;transition:background .15s}
+    .sel-row:hover{background:#1e2235}
+    .sel-row.sel-ativa{border-left:4px solid #3b82f6;background:#0a1628}
 
     /* MODAL */
     .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px}
@@ -108,7 +124,7 @@
     .modal-actions{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
     .modal-actions .btn{flex:1}
 
-    /* GRADE SOFASCORE */
+    /* GRADE */
     .grade-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px}
     .liga-group{margin-bottom:18px;background:#1a1d27;border:1px solid #2d3148;border-radius:10px;overflow:hidden}
     .liga-title{font-size:.75rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.6px;padding:9px 16px;background:#13151f;display:flex;align-items:center;gap:8px;border-bottom:1px solid #1e2235}
@@ -143,9 +159,6 @@
     .progress-fill.warning{background:linear-gradient(90deg,#f59e0b,#d97706)}
     .progress-fill.critical{background:linear-gradient(90deg,#ef4444,#b91c1c)}
 
-    .btn-actions{display:inline-flex;align-items:center;gap:7px;background:#21262d;color:#c9d1d9;border:1px solid #30363d;border-radius:7px;padding:8px 14px;font-size:.83rem;font-weight:600;text-decoration:none;transition:background .2s}
-    .btn-actions:hover{background:#30363d}
-
     .stop-alert{background:#450a0a;border:1px solid #7f1d1d;border-radius:8px;padding:12px 16px;color:#fca5a5;font-size:.85rem;font-weight:600;margin-bottom:16px}
   </style>
 </head>
@@ -171,67 +184,83 @@
     STOP DIARIO ATINGIDO — Nao realize mais apostas hoje.
   </div>
 
-  <!-- Cards de banca -->
-  <div class="cards">
-    <div class="card">
+  <!-- HERO: 3 grandes KPIs -->
+  <div class="hero-cards">
+    <div class="hero-card">
       <div class="lbl">Banca Atual</div>
       <div class="val b" id="b-banca">R$ --</div>
-      <div class="sub" id="b-banca-sub">--</div>
+      <div class="sub" id="b-banca-sub">Inicial: R$ --</div>
     </div>
-    <div class="card">
-      <div class="lbl">Lucro / Prejuizo</div>
+    <div class="hero-card">
+      <div class="lbl">Lucro / Prejuizo Total</div>
       <div class="val" id="b-lucro">--</div>
       <div class="sub" id="b-roi">ROI: --</div>
     </div>
-    <div class="card">
-      <div class="lbl">Taxa de Acerto</div>
-      <div class="val g" id="b-taxa">--%</div>
-      <div class="sub" id="b-wl">-- W / -- L</div>
-    </div>
-    <div class="card">
-      <div class="lbl">Sequencia</div>
-      <div class="val" id="b-streak">--</div>
-      <div class="sub" id="b-streak-tipo">--</div>
-    </div>
-    <div class="card">
-      <div class="lbl">P&L Hoje</div>
+    <div class="hero-card">
+      <div class="lbl">P&amp;L Hoje</div>
       <div class="val" id="b-hoje">--</div>
-      <div class="sub" id="b-stop">Stop: --</div>
-    </div>
-    <div class="card">
-      <div class="lbl">Stake Sugerido</div>
-      <div class="val" id="b-stake">R$ --</div>
-      <div class="sub">2.5% da banca</div>
-    </div>
-    <div class="card" id="clv-card" style="display:none">
-      <div class="lbl">CLV Medio</div>
-      <div class="val" id="b-clv">--</div>
-      <div class="sub" id="b-clv-sub">apostas medidas</div>
+      <div class="sub" id="b-stop">Stop diario: --</div>
     </div>
   </div>
 
-  <!-- Seleções de hoje -->
+  <!-- Stats bar secundarios -->
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="sv g" id="sb-wins">--</div>
+      <div class="sl">Vitorias</div>
+    </div>
+    <div class="stat-sep"></div>
+    <div class="stat-item">
+      <div class="sv r" id="sb-losses">--</div>
+      <div class="sl">Derrotas</div>
+    </div>
+    <div class="stat-sep"></div>
+    <div class="stat-item">
+      <div class="sv" id="sb-taxa">--%</div>
+      <div class="sl">Taxa Acerto</div>
+    </div>
+    <div class="stat-sep"></div>
+    <div class="stat-item">
+      <div class="sv" id="sb-streak">--</div>
+      <div class="sl">Sequencia</div>
+    </div>
+    <div class="stat-sep"></div>
+    <div class="stat-item">
+      <div class="sv b" id="sb-stake">R$ --</div>
+      <div class="sl">Stake Sugerido</div>
+    </div>
+    <div class="stat-sep" id="sb-clv-sep" style="display:none"></div>
+    <div class="stat-item" id="sb-clv-item" style="display:none">
+      <div class="sv" id="sb-clv">--</div>
+      <div class="sl">CLV Medio</div>
+    </div>
+  </div>
+
+  <!-- Selecoes de hoje -->
   <section>
     <h2>
       Selecoes de Hoje
-      <span style="font-size:.75rem;color:#475569;font-weight:400" id="sel-hoje-sub">carregando...</span>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <span style="font-size:.75rem;color:#475569;font-weight:400" id="sel-hoje-sub">carregando...</span>
+        <button class="btn btn-ghost btn-sm" id="btn-verify" onclick="verificarResultados()">Verificar Resultados</button>
+      </div>
     </h2>
     <div id="sel-hoje-container"></div>
+  </section>
+
+  <!-- Historico COMPLETO — flat, sem accordion -->
+  <section>
+    <h2>
+      Historico de Apostas
+      <span style="font-size:.75rem;color:#475569;font-weight:400" id="hist-total-sub"></span>
+    </h2>
+    <div id="historico-bets"></div>
   </section>
 
   <!-- Curva de banca -->
   <section>
     <h2>Curva de Banca</h2>
     <div class="chart-wrap"><canvas id="grafico-banca"></canvas></div>
-  </section>
-
-  <!-- Histórico agrupado por data -->
-  <section>
-    <h2>
-      Historico de Apostas
-      <button class="btn btn-ghost btn-sm" id="btn-verify" onclick="verificarResultados()">Verificar Resultados</button>
-    </h2>
-    <div id="historico-bets"></div>
   </section>
 
   <!-- Stats por liga -->
@@ -332,33 +361,25 @@
     </div>
   </div>
 
-  <!-- Veredicto principal -->
   <div id="bt-veredicto" style="margin-bottom:20px"></div>
-
-  <!-- Cards de resumo -->
   <div class="cards" id="bt-cards"></div>
 
-  <!-- Grafico curva de equity -->
   <section>
-    <h2>Curva de P&L Acumulada (unidades)</h2>
+    <h2>Curva de P&amp;L Acumulada (unidades)</h2>
     <div class="chart-wrap" style="height:280px"><canvas id="grafico-backtest"></canvas></div>
   </section>
 
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px">
-    <!-- Tabela por faixa de odd -->
     <section>
       <h2>Por Faixa de Odd</h2>
       <div id="bt-faixas"></div>
     </section>
-
-    <!-- Tabela por liga -->
     <section>
       <h2>Por Liga</h2>
       <div id="bt-ligas"></div>
     </section>
   </div>
 
-  <!-- Recomendacoes -->
   <section id="bt-recom-section" style="display:none">
     <h2>Recomendacoes</h2>
     <div id="bt-recomendacoes" style="padding:16px;font-size:.875rem;line-height:1.8;color:#cbd5e1"></div>
@@ -403,7 +424,7 @@
         Stake: <strong id="r-stake">--</strong> · Odd: <strong id="r-odd">--</strong>
       </div>
       <div style="font-size:.8rem;color:#64748b;margin-top:4px">
-        WIN → +R$<span id="r-win-pnl">--</span> &nbsp;|&nbsp; LOSS → -R$<span id="r-loss-pnl">--</span>
+        WIN &rarr; +R$<span id="r-win-pnl">--</span> &nbsp;|&nbsp; LOSS &rarr; -R$<span id="r-loss-pnl">--</span>
       </div>
     </div>
     <div class="modal-actions">
@@ -423,7 +444,7 @@
 let _bancaStats = {};
 let _selHoje = [];
 let _registrados = new Set();
-let _currentBet = null; // para o modal de resultado
+let _currentBet = null;
 let _scanPoll = null;
 
 // ── UTILS ──
@@ -449,8 +470,7 @@ function fmtDataLonga(s){if(!s)return '--';const[y,m,d]=s.split('-');return `${d
 function badgeRes(r){
   const m={WIN:'win',LOSS:'loss',PENDENTE:'pend',VOID:'void',NAO_APOSTADO:'naoapostou'};
   const labels={WIN:'WIN',LOSS:'LOSS',PENDENTE:'PENDENTE',VOID:'VOID',NAO_APOSTADO:'NAO APOSTOU'};
-  const cls=m[r]||'void';
-  return `<span class="badge ${cls}">${labels[r]||r}</span>`;
+  return `<span class="badge ${m[r]||'void'}">${labels[r]||r}</span>`;
 }
 
 function pnlColor(v){return v>0?'g':v<0?'r':''}
@@ -545,9 +565,11 @@ function deleteBet(){
 
 // ── CARREGAR BANCA ──
 function carregarBanca(){
-  // Stats cards
+  // Stats e hero cards
   fetch('/api/bankroll').then(r=>r.json()).then(s=>{
     _bancaStats=s;
+
+    // Hero cards
     document.getElementById('b-banca').textContent=fmtR(s.banca_atual||0);
     document.getElementById('b-banca-sub').textContent=`Inicial: ${fmtR(s.banca_inicial||0)}`;
 
@@ -557,43 +579,38 @@ function carregarBanca(){
     elL.className='val '+(lucro>0?'g':lucro<0?'r':'');
     document.getElementById('b-roi').textContent=`ROI: ${s.roi_percent||0}%`;
 
-    document.getElementById('b-taxa').textContent=(s.taxa_acerto||0)+'%';
-    document.getElementById('b-wl').textContent=`${s.wins||0} W / ${s.losses||0} L`;
-
-    const streak=s.streak||0;
-    const tipo=s.streak_tipo;
-    const elS=document.getElementById('b-streak');
-    elS.textContent=(streak||'--')+(streak&&tipo?' '+tipo:'');
-    elS.className='val '+(tipo==='WIN'?'g':tipo==='LOSS'?'r':'');
-    document.getElementById('b-streak-tipo').textContent=streak?'consecutivos':'sem apostas';
-
     const pnlHoje=s.pnl_hoje||0;
     const elH=document.getElementById('b-hoje');
     elH.textContent=(pnlHoje>=0?'+':'')+fmtR(pnlHoje);
     elH.className='val '+(pnlHoje>0?'g':pnlHoje<0?'r':'');
-    document.getElementById('b-stop').textContent=`Stop: ${fmtR(s.stop_limite||0)}`;
+    document.getElementById('b-stop').textContent=`Stop diario: ${fmtR(s.stop_limite||0)}`;
 
-    document.getElementById('b-stake').textContent=fmtR(s.stake_sugerido||0);
+    // Stats bar
+    document.getElementById('sb-wins').textContent=s.wins||0;
+    document.getElementById('sb-losses').textContent=s.losses||0;
+    document.getElementById('sb-taxa').textContent=(s.taxa_acerto||0)+'%';
 
-    // CLV card (so aparece quando ha dados)
-    const nClv=s.n_clv||0;
-    const avgClv=s.avg_clv||0;
-    const clvCard=document.getElementById('clv-card');
+    const streak=s.streak||0, tipo=s.streak_tipo;
+    const elSt=document.getElementById('sb-streak');
+    elSt.textContent=streak?(streak+'x '+tipo):'--';
+    elSt.className='sv '+(tipo==='WIN'?'g':tipo==='LOSS'?'r':'');
+
+    document.getElementById('sb-stake').textContent=fmtR(s.stake_sugerido||0);
+
+    const nClv=s.n_clv||0, avgClv=s.avg_clv||0;
     if(nClv>0){
-      clvCard.style.display='';
-      const elClv=document.getElementById('b-clv');
-      elClv.textContent=(avgClv>=0?'+':'')+avgClv.toFixed(2)+'%';
-      elClv.className='val '+(avgClv>0?'g':avgClv<0?'r':'');
-      document.getElementById('b-clv-sub').textContent=`${nClv} apostas medidas`;
+      document.getElementById('sb-clv-sep').style.display='';
+      document.getElementById('sb-clv-item').style.display='';
+      const ce=document.getElementById('sb-clv');
+      ce.textContent=(avgClv>=0?'+':'')+avgClv.toFixed(2)+'%';
+      ce.className='sv '+(avgClv>0?'g':avgClv<0?'r':'');
     }
 
-    const stopDiv=document.getElementById('stop-alerta');
-    stopDiv.style.display=s.stop_atingido?'block':'none';
+    document.getElementById('stop-alerta').style.display=s.stop_atingido?'block':'none';
   });
 
-  // Historico de apostas
+  // Historico flat (sem accordion)
   fetch('/api/bets').then(r=>r.json()).then(bets=>{
-    // Agrupa por data
     const grupos={};
     for(const b of bets){
       const d=b.data_jogo||'sem data';
@@ -602,7 +619,6 @@ function carregarBanca(){
     }
     const datas=Object.keys(grupos).sort().reverse();
 
-    // Registrados hoje
     const hoje=new Date();
     const hoje_brt=new Date(hoje.getTime()-3*3600000).toISOString().slice(0,10);
     _registrados=new Set(
@@ -610,9 +626,12 @@ function carregarBanca(){
     );
     renderSelHoje();
 
-    // Renderiza histórico
+    const totalApostadas=bets.filter(b=>b.apostado==1).length;
+    document.getElementById('hist-total-sub').textContent=
+      totalApostadas?`${totalApostadas} apostas registradas`:'';
+
     if(!datas.length){
-      document.getElementById('historico-bets').innerHTML='<div class="empty">Nenhuma aposta registrada ainda.</div>';
+      document.getElementById('historico-bets').innerHTML='<div class="empty">Nenhuma aposta registrada ainda. Registre as selecoes do dia acima.</div>';
       return;
     }
 
@@ -622,41 +641,49 @@ function carregarBanca(){
       const apostadas=grupo.filter(b=>b.apostado==1);
       const wins=apostadas.filter(b=>b.resultado==='WIN').length;
       const losses=apostadas.filter(b=>b.resultado==='LOSS').length;
+      const pend=apostadas.filter(b=>b.resultado==='PENDENTE').length;
       const pnlDia=apostadas.reduce((a,b)=>(a+(b.pnl_reais||0)),0);
-      const pnlColor_=pnlDia>0?'g':pnlDia<0?'r':'';
+      const pc=pnlDia>0?'g':pnlDia<0?'r':'';
+      const eHoje=data===hoje_brt;
 
-      html+=`<div class="date-group">
-        <div class="date-group-header" onclick="toggleGrupo(this)">
-          <span class="dg-date">${fmtDataLonga(data)}</span>
-          <div class="dg-stats">
-            <span>${apostadas.length} aposta${apostadas.length!==1?'s':''}</span>
-            <span>${wins}W / ${losses}L</span>
-          </div>
-          <span class="dg-pnl ${pnlColor_}">${pnlDia>=0?'+':''}${fmtR(pnlDia)}</span>
+      // Separador de data
+      html+=`<div class="hist-sep">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="sep-date">${fmtDataLonga(data)}</span>
+          ${eHoje?'<span class="sep-hoje">HOJE</span>':''}
         </div>
-        <div class="date-group-body ${data===hoje_brt?'open':''}">`;
+        <div class="sep-wl">
+          ${apostadas.length?`<span>${apostadas.length} apostas</span>`:'<span>0 apostas</span>'}
+          ${wins?`<span class="g">${wins}W</span>`:''}
+          ${losses?`<span class="r">${losses}L</span>`:''}
+          ${pend?`<span class="b">${pend} pend.</span>`:''}
+        </div>
+        ${apostadas.length?`<span class="sep-pnl ${pc}">${pnlDia>=0?'+':''}${fmtR(pnlDia)}</span>`:'<span></span>'}
+      </div>`;
 
+      // Linhas de apostas
       for(const b of grupo){
         const isApostado=b.apostado==1;
         const rowClass=b.resultado==='WIN'?'win-row':b.resultado==='LOSS'?'loss-row':b.resultado==='PENDENTE'?'pend-row':'nao-row';
         const pnl=b.pnl_reais;
         const canUpdate=isApostado&&b.resultado==='PENDENTE';
-        const canView=isApostado&&b.resultado!=='PENDENTE';
+        const canEdit=isApostado&&b.resultado!=='PENDENTE';
+        const clvTag=b.clv_percent!=null
+          ?` &middot; CLV <span class="${b.clv_percent>=0?'g':'r'}">${b.clv_percent>=0?'+':''}${Number(b.clv_percent).toFixed(1)}%</span>`
+          :'';
 
-        const clvTag=b.clv_percent!=null?` · CLV: <span class="${b.clv_percent>=0?'g':'r'}">${b.clv_percent>=0?'+':''}${Number(b.clv_percent).toFixed(1)}%</span>`:'';
         html+=`<div class="bet-row ${rowClass}">
           <div>
             <div class="bet-jogo">${b.jogo||'--'}</div>
-            <div class="bet-meta">${b.liga||'--'} · ${fmtHora(b.start_time)} · Fav: <strong>${b.favorito}</strong> @ ${b.odd_entrada} · Score: ${b.score_entrada||'--'}${clvTag}</div>
+            <div class="bet-meta">${b.liga||'--'} &middot; ${fmtHora(b.start_time)} &middot; Fav: <strong>${b.favorito}</strong> @ ${b.odd_entrada} &middot; Score: ${b.score_entrada||'--'}${clvTag}</div>
           </div>
-          <div>${badgeRes(b.resultado)}</div>
-          <div style="font-size:.88rem;font-weight:600">${isApostado?fmtR(b.stake_reais):'-'}</div>
-          <div style="font-size:.88rem;font-weight:700" class="${pnlColor(pnl)}">${pnl!=null?(pnl>=0?'+':'')+fmtR(pnl):'-'}</div>
+          <div>${badgeRes(isApostado?b.resultado:'NAO_APOSTADO')}</div>
+          <div style="font-size:.88rem;font-weight:600;color:#94a3b8">${isApostado?fmtR(b.stake_reais):'-'}</div>
+          <div style="font-size:1rem;font-weight:700" class="${pnlColor(pnl)}">${pnl!=null?(pnl>=0?'+':'')+fmtR(pnl):'-'}</div>
           <div>${canUpdate?`<button class="btn btn-primary btn-sm" onclick='abrirResultado(${JSON.stringify(b)})'>Resultado</button>`:
-            (isApostado&&canView?`<button class="btn btn-ghost btn-sm" onclick='abrirResultado(${JSON.stringify(b)})'>Editar</button>`:'-')}</div>
+            (canEdit?`<button class="btn btn-ghost btn-sm" onclick='abrirResultado(${JSON.stringify(b)})'>Editar</button>`:'-')}</div>
         </div>`;
       }
-      html+='</div></div>';
     }
     document.getElementById('historico-bets').innerHTML=html;
   });
@@ -696,40 +723,32 @@ function carregarBanca(){
       <td>${s.taxa}%</td>
       <td class="${pnlColor(s.pnl)}">${s.pnl>=0?'+':''}${fmtR(s.pnl)}</td>
     </tr>`).join('');
-    el.innerHTML=`<table><thead><tr><th>Liga</th><th>Resultado</th><th>Taxa</th><th>P&L</th></tr></thead><tbody>${rows}</tbody></table>`;
+    el.innerHTML=`<table><thead><tr><th>Liga</th><th>Resultado</th><th>Taxa</th><th>P&amp;L</th></tr></thead><tbody>${rows}</tbody></table>`;
   });
 }
 
-function toggleGrupo(header){
-  const body=header.nextElementSibling;
-  body.classList.toggle('open');
-}
-
-// ── SELEÇÕES DE HOJE (na aba banca) ──
+// ── SELEÇÕES DE HOJE (aba banca) ──
 function renderSelHoje(){
   const el=document.getElementById('sel-hoje-container');
   if(!_selHoje.length){
-    el.innerHTML='<div class="empty">Nenhuma selecao aprovada hoje. Aguarde o scan das 8h ou rode manualmente.</div>';
-    document.getElementById('sel-hoje-sub').textContent='0 selecoes';
+    el.innerHTML='<div class="empty">Nenhuma selecao aprovada hoje. Aguarde o scan das 8h ou rode manualmente na aba Grade.</div>';
+    document.getElementById('sel-hoje-sub').textContent='0 selecoes hoje';
     return;
   }
-  document.getElementById('sel-hoje-sub').textContent=`${_selHoje.length} selecao${_selHoje.length>1?'es':''}`;
+  document.getElementById('sel-hoje-sub').textContent=`${_selHoje.length} selecao${_selHoje.length>1?'es':''} aprovada${_selHoje.length>1?'s':''}`;
   const rows=_selHoje.map(s=>{
     const jaReg=_registrados.has(s.market_id||'');
-    const hora=fmtHora(s.start_time);
-    const forma=s.form_jogos_analisados>0?`${s.form_vitorias}/5 vitorias`:'sem dados de forma';
-    return `<div class="bet-row pend-row">
+    const forma=s.form_jogos_analisados>0?`${s.form_vitorias}/5 vitórias`:'sem dados de forma';
+    return `<div class="sel-row ${!jaReg?'sel-ativa':''}">
       <div>
-        <div class="bet-jogo">${hora}  ${s.event}</div>
-        <div class="bet-meta">${s.competition} · Fav: <strong>${s.favorito}</strong> @ ${s.odd_favorito} · Score: ${s.score}/100 · ${forma}</div>
+        <div class="bet-jogo">${fmtHora(s.start_time)}&nbsp;&nbsp;${s.event}</div>
+        <div class="bet-meta">${s.competition} &middot; Fav: <strong style="color:#60a5fa">${s.favorito}</strong> @ <strong>${s.odd_favorito}</strong> &middot; Score: <strong>${s.score}/100</strong> &middot; ${forma} &middot; ${s.num_bookmakers} casas</div>
       </div>
       <div>${jaReg?'<span class="badge pend">REGISTRADO</span>':''}</div>
-      <div></div>
-      <div></div>
-      <div>${jaReg?'':'<button class="btn btn-primary btn-sm" onclick="abrirRegistro('+JSON.stringify(s).replace(/"/g,"&quot;")+')" >Registrar</button>'}</div>
+      <div>${jaReg?'':'<button class="btn btn-primary btn-sm" onclick="abrirRegistro('+JSON.stringify(s).replace(/"/g,'&quot;')+')">Registrar Aposta</button>'}</div>
     </div>`;
   }).join('');
-  el.innerHTML=`<div style="padding:6px 0">${rows}</div>`;
+  el.innerHTML=`<div style="padding:4px 0">${rows}</div>`;
 }
 
 // ── CARREGAR SELEÇÕES ──
@@ -745,7 +764,7 @@ fetch('/api/selecoes_hoje').then(r=>r.json()).then(data=>{
       <td><strong>${s.event}</strong><br><span class="sub-txt">${s.competition}</span></td>
       <td>${s.favorito}<br><strong>${s.odd_favorito}</strong></td>
       <td>${sbar(s.score)}</td>
-      <td class="sub-txt">${s.form_jogos_analisados>0?s.form_vitorias+'/5 vitorias':'sem dados de forma'}</td>
+      <td class="sub-txt">${s.form_jogos_analisados>0?s.form_vitorias+'/5':'sem dados'}</td>
       <td>${s.num_bookmakers}</td>
     </tr>`).join('')}</tbody></table>`;
 }).catch(()=>{document.getElementById('tbl-hoje').innerHTML='<div class="empty">Erro ao carregar.</div>'});
@@ -798,7 +817,7 @@ fetch('/api/historico').then(r=>r.json()).then(rows=>{
   }
 }).catch(()=>{});
 
-// ── GRADE SOFASCORE ──
+// ── GRADE ──
 fetch('/api/grade_completa').then(r=>r.json()).then(data=>{
   const jogos=data.jogos||[];
   document.getElementById('grade-info').textContent=
@@ -899,7 +918,6 @@ function carregarBacktest(){
     document.getElementById('bt-subtitulo').textContent=
       `${bt.num_temporadas||0} temporadas (${bt.data_inicio||''}  ${bt.data_fim||''}) · ${g.total||0} apostas simuladas · Atualizado: ${geradoEm}`;
 
-    // Veredicto
     const roi=g.roi||0;
     const isPos=roi>=0;
     const mf=bt.melhor_faixa;
@@ -915,23 +933,19 @@ function carregarBacktest(){
         </div>
       </div>`;
 
-    // Cards
     document.getElementById('bt-cards').innerHTML=`
       <div class="card"><div class="lbl">Total Apostas</div><div class="val b">${g.total}</div><div class="sub">${bt.num_temporadas} temp · ${(bt.ligas||[]).length} ligas</div></div>
       <div class="card"><div class="lbl">Taxa de Acerto</div><div class="val ${g.win_rate>=65?'g':g.win_rate>=55?'y':'r'}">${g.win_rate}%</div><div class="sub">${g.wins}W / ${g.losses}L</div></div>
       <div class="card"><div class="lbl">ROI Geral</div><div class="val ${roi>=0?'g':'r'}">${roi>=0?'+':''}${roi}%</div><div class="sub">sem filtros de forma</div></div>
-      <div class="card"><div class="lbl">P&L (unidades)</div><div class="val ${g.pnl_units>=0?'g':'r'}">${g.pnl_units>=0?'+':''}${g.pnl_units}</div><div class="sub">por unit apostada</div></div>
-      <div class="card"><div class="lbl">Max Drawdown</div><div class="val r">${g.max_drawdown}u</div><div class="sub">pior sequencia</div></div>
-    `;
+      <div class="card"><div class="lbl">P&amp;L (unidades)</div><div class="val ${g.pnl_units>=0?'g':'r'}">${g.pnl_units>=0?'+':''}${g.pnl_units}</div><div class="sub">por unit apostada</div></div>
+      <div class="card"><div class="lbl">Max Drawdown</div><div class="val r">${g.max_drawdown}u</div><div class="sub">pior sequencia</div></div>`;
 
-    // Tabela por faixa
     const faixas=bt.por_faixa||[];
     if(faixas.length){
       const rows=faixas.map(s=>{
         const r=s.roi||0;
-        const isMelhor=s.melhor;
-        return `<tr style="${isMelhor?'background:#0f1a2e':''}">
-          <td style="font-weight:${isMelhor?700:400}">${s.faixa}${isMelhor?' <span class="badge sel">MELHOR</span>':''}</td>
+        return `<tr style="${s.melhor?'background:#0f1a2e':''}">
+          <td style="font-weight:${s.melhor?700:400}">${s.faixa}${s.melhor?' <span class="badge sel">MELHOR</span>':''}</td>
           <td>${s.total}</td>
           <td class="${s.win_rate>=65?'g':s.win_rate>=55?'y':'r'}">${s.win_rate}%</td>
           <td class="${r>=0?'g':'r'}" style="font-weight:600">${r>=0?'+':''}${r}%</td>
@@ -941,23 +955,18 @@ function carregarBacktest(){
         `<table><thead><tr><th>Faixa</th><th>Apostas</th><th>Acerto</th><th>ROI</th></tr></thead><tbody>${rows}</tbody></table>`;
     }
 
-    // Tabela por liga
     const ligas=bt.por_liga||[];
     if(ligas.length){
       const rows=ligas.map(s=>{
         const r=s.roi||0;
-        return `<tr>
-          <td>${s.liga}</td>
-          <td>${s.total}</td>
+        return `<tr><td>${s.liga}</td><td>${s.total}</td>
           <td class="${s.win_rate>=65?'g':s.win_rate>=55?'y':'r'}">${s.win_rate}%</td>
-          <td class="${r>=0?'g':'r'}" style="font-weight:600">${r>=0?'+':''}${r}%</td>
-        </tr>`;
+          <td class="${r>=0?'g':'r'}" style="font-weight:600">${r>=0?'+':''}${r}%</td></tr>`;
       }).join('');
       document.getElementById('bt-ligas').innerHTML=
         `<table><thead><tr><th>Liga</th><th>Apostas</th><th>Acerto</th><th>ROI</th></tr></thead><tbody>${rows}</tbody></table>`;
     }
 
-    // Recomendacoes
     const recom=[];
     const faixasPos=faixas.filter(s=>s.roi>0&&s.total>=30);
     const faixasNeg=faixas.filter(s=>s.roi<-5&&s.total>=30);
@@ -967,13 +976,11 @@ function carregarBacktest(){
     if(faixasNeg.length) recom.push(`Evite apostas com odd ${faixasNeg.map(s=>s.faixa).join(', ')} — ROI historicamente negativo nessas faixas`);
     if(ligasNeg.length)  recom.push(`Ligas com ROI negativo: <strong>${ligasNeg.map(s=>s.liga+' ('+s.roi+'%)').join(', ')}</strong> — considere desativar ou ser mais seletivo`);
     if(ligasPos.length)  recom.push(`Ligas mais lucrativas: <strong>${ligasPos.map(s=>s.liga+' ('+s.roi+'%)').join(', ')}</strong> — priorize`);
-    if(!roi&&mf&&mf.roi>0) recom.push(`Mesmo com ROI geral negativo, a faixa ${mf.faixa} e lucrativa isoladamente (${mf.roi}%) — considere estreitar o range do modelo`);
     if(recom.length){
       document.getElementById('bt-recom-section').style.display='';
       document.getElementById('bt-recomendacoes').innerHTML='<ul style="padding-left:18px">'+recom.map(r=>`<li style="margin-bottom:8px">${r}</li>`).join('')+'</ul>';
     }
 
-    // Grafico curva de equity
     const curve=bt.equity_curve||[];
     if(curve.length){
       const labels=curve.map(p=>p.data);
@@ -1037,7 +1044,7 @@ function showToast(msg,cor){
   setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),400)},3500);
 }
 
-// ── VERIFICAR RESULTADOS AUTOMATICAMENTE ──
+// ── VERIFICAR RESULTADOS ──
 function verificarResultados(){
   const btn=document.getElementById('btn-verify');
   if(btn){btn.disabled=true;btn.textContent='Verificando...'}
