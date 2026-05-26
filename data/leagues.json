@@ -30,7 +30,7 @@
       "odds_api_key": "soccer_germany_bundesliga",
       "football_data_code": "BL1",
       "api_football_id": 78,
-      "active": true
+      "active": false
     },
     {
       "name": "Ligue 1",

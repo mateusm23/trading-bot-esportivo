@@ -9,7 +9,7 @@ load_dotenv()
 logger = logging.getLogger(__name__)
 
 ODD_MIN = 1.35
-ODD_MAX = 1.60
+ODD_MAX = 1.49  # backtest: faixas 1.50-1.60 tem ROI -7% a -8% historicamente
 MIN_BOOKMAKERS = 5
 BASE_URL = "https://api.the-odds-api.com/v4"
 

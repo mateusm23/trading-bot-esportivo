@@ -3,15 +3,17 @@ import logging
 logger = logging.getLogger(__name__)
 
 # Pontuação máxima por critério (total = 100)
-SCORE_ODD_IDEAL = 30        # odd entre 1.40 e 1.55
+SCORE_ODD_IDEAL = 30        # odd no sweet spot historico (1.35-1.44, ROI +8%)
 SCORE_FORMA = 25            # 5 vitórias nos últimos 5 jogos
 SCORE_COBERTURA = 20        # > 10 casas cobrindo o jogo
 SCORE_SEM_VETO = 25         # nenhum veto ativo
 
-ODD_IDEAL_MIN = 1.40
-ODD_IDEAL_MAX = 1.55
+# Backtest (3 temporadas, 5 ligas): sweet spot é 1.35-1.39 (+8.2% ROI)
+# Faixa 1.45-1.49 também positiva (+1.4%); 1.40-1.44 negativa sem filtro de forma
+ODD_IDEAL_MIN = 1.35
+ODD_IDEAL_MAX = 1.44
 ODD_RANGE_MIN = 1.35        # limite inferior do filtro global
-ODD_RANGE_MAX = 1.60        # limite superior do filtro global
+ODD_RANGE_MAX = 1.49        # limite superior — alinhado com odds_client.ODD_MAX
 BOOKMAKERS_ALTO = 10
 BOOKMAKERS_MINIMO = 5
 
