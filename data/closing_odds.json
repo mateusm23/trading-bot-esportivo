@@ -1,17 +1,24 @@
 {
-  "gerado_em": "2026-05-24T18:41:24.482403+00:00",
+  "gerado_em": "2026-05-26T19:34:38.635908+00:00",
   "sport_keys_capturados": [
-    "soccer_usa_mls",
-    "soccer_italy_serie_a"
+    "soccer_conmebol_copa_libertadores"
   ],
   "market_odds": {
-    "bdd5478025348693f3832fce36316804": 1.55,
-    "b526e8360f770b479c7be8ccd6a9b362": 1.35,
-    "bd4d698a8f3f8f0519ebbf98d7f397a4": 1.927,
-    "fedbf15cccda8bb56a4b77653d4e3ea9": 1.37,
-    "c67fe0c645091f98b370e803221fbb87": 1.341,
-    "cbf105caa5d11b7a821bf70c8eec9a89": 1.553,
-    "cc506f7d960cb683d59fadb55c741ecb": 1.923,
-    "9de949052282f582d633832df83910ab": 1.49
+    "56a2b54de8d26f62f1918a2289575812": 1.334,
+    "17f05479aa4eabcee2487803a862f4b4": 1.831,
+    "14af24c96fcfe20df777e0aa96e6edab": 2.563,
+    "fc7e02515d86ef3abb2109474b6173a0": 1.682,
+    "c3355de7e681d60ea183b4a888364d0d": 1.103,
+    "7e6b2b897df4de06729fcd49700a035f": 1.63,
+    "761869312210a54e7b1d87a7b3b951ae": 1.873,
+    "1438f711618b3f340edfc07aac76b11f": 1.373,
+    "115075d15a889e01ae67f4a2a9e45ef8": 2.385,
+    "fb90e204acfda4c59fbc384b3a6ccb12": 1.68,
+    "beebae8d97d82a1a4a35f69fbd22ea6c": 1.127,
+    "a56a71feaa34e51ddfaddb6a1465918f": 1.882,
+    "21a3be4176db421a5859889a697936de": 1.618,
+    "2fcb7e3bfaf181f6db90f5cea2653f6f": 1.246,
+    "debfdd4f7b5afe1a8651b2aa341f6fcd": 1.238,
+    "274fa679ab01d101e92020397f121f2b": 1.391
   }
 }
