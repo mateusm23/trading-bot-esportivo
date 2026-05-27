@@ -1,25 +1,5 @@
 {
-  "data": "2026-05-26",
-  "total_jogos": 7,
-  "selecoes": [
-    {
-      "market_id": "56a2b54de8d26f62f1918a2289575812",
-      "event": "LDU Quito vs Club Always Ready",
-      "competition": "Copa Libertadores",
-      "sport_key": "soccer_conmebol_copa_libertadores",
-      "start_time": "2026-05-26T22:00:00Z",
-      "home_team": "LDU Quito",
-      "away_team": "Club Always Ready",
-      "favorito": "LDU Quito",
-      "odd_favorito": 1.352,
-      "odd_empate": 5.018,
-      "odd_zebra": 7.572,
-      "num_bookmakers": 20,
-      "score": 63,
-      "motivo": "Score 63/100 | 0/5 vitórias | 20 casas",
-      "form_jogos_analisados": 0,
-      "form_vitorias": 0,
-      "form_media_gols_sofridos": 0.0
-    }
-  ]
+  "data": "2026-05-27",
+  "total_jogos": 6,
+  "selecoes": []
 }
