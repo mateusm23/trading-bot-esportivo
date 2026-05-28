@@ -1,9 +1,9 @@
 {
-  "ultimo_scan": "2026-05-27T14:28:03.006502+00:00",
+  "ultimo_scan": "2026-05-28T14:38:33.223621+00:00",
   "tier_total": 500,
-  "requests_remaining": 396,
-  "requests_used": 104,
-  "dias_restantes_mes": 5,
-  "budget_por_dia": 79.2,
+  "requests_remaining": 392,
+  "requests_used": 108,
+  "dias_restantes_mes": 4,
+  "budget_por_dia": 98.0,
   "status": "SAFE"
 }
