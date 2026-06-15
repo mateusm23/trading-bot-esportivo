@@ -1,39 +1,7 @@
-name: Relatorio Semanal
-
-on:
-  workflow_dispatch:
-  schedule:
-    - cron: '0 12 * * 1'   # Segunda-feira 09h BRT (12h UTC)
-
+﻿# Desabilitado na V2 — Momentum Bet roda localmente
+on: workflow_dispatch
 jobs:
-  report:
+  disabled:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-
-      - name: Instalar dependencias
-        run: pip install -r requirements.txt
-
-      - name: Criar .env
-        run: |
-          cat > .env << EOF
-          ODDS_API_KEY=${{ secrets.ODDS_API_KEY }}
-          FOOTBALL_DATA_KEY=${{ secrets.FOOTBALL_DATA_KEY }}
-          TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID=${{ secrets.TELEGRAM_CHAT_ID }}
-          BANCA_INICIAL=${{ secrets.BANCA_INICIAL }}
-          STAKE_PERCENT=2.5
-          STOP_DIARIO_PERCENT=5.0
-          EOF
-
-      - name: Criar pastas
-        run: mkdir -p logs data
-
-      - name: Rodar relatorio semanal
-        run: python scripts/analyze_historico.py
+      - run: echo "Workflow desabilitado na V2"

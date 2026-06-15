@@ -1,8 +1,14 @@
+"""
+Momentum Bet Bot V2 — Bot Telegram para monitoramento de pressão em jogos ao vivo.
+Selecione jogos diretamente pelo Telegram; dados coletados pela API do Momentum Bet local.
+"""
+
 import logging
 import os
 import sys
+import threading
 import time
-import json
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -11,147 +17,214 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s %(levelname)s %(name)s: %(message)s",
     handlers=[
-        logging.FileHandler("logs/trading_bot.log", encoding="utf-8"),
         logging.StreamHandler(sys.stdout),
     ],
 )
 logger = logging.getLogger(__name__)
 
-from core.database import Database
-from core.bankroll import Bankroll
-from core.odds_client import OddsClient
-from core.filter_engine import analyze_match
-from core.live_monitor import LiveMonitor
-from core.scheduler import DailyScheduler
 from alerts.telegram_bot import TelegramBot
-from dashboard.app import start_in_thread
+from core import momentum_client as api
+from core import sinais
 
-SCAN_INTERVAL = 7200      # segundos entre varreduras (2h) — respeita cota de 500 req/mês
-KICKOFF_WINDOW = 90       # minutos antes do jogo para enviar alerta
-LEAGUES_PATH = os.path.join(os.path.dirname(__file__), "data", "leagues.json")
+bot = TelegramBot()
 
+# ── Handlers de comando ───────────────────────────────────────────────────────
 
-def load_sport_keys() -> list[str]:
-    with open(LEAGUES_PATH, encoding="utf-8") as f:
-        leagues = json.load(f)["leagues"]
-    return [lg["odds_api_key"] for lg in leagues if lg.get("active")]
-
-
-def minutos_ate_kickoff(start_time: str) -> float:
-    from datetime import datetime, timezone
-    try:
-        dt = datetime.fromisoformat(start_time.replace("Z", "+00:00"))
-        delta = dt - datetime.now(timezone.utc)
-        return delta.total_seconds() / 60
-    except Exception:
-        return 9999
-
-
-def main() -> None:
-    logger.info("=== Trading Bot iniciando ===")
-
-    banca_inicial = float(os.getenv("BANCA_INICIAL", "1000"))
-
-    db = Database()
-    db.initialize()
-
-    bankroll = Bankroll(db=db, banca_inicial=banca_inicial)
-    odds_client = OddsClient()
-    telegram = TelegramBot(db=db)
-    monitor = LiveMonitor(db=db, bankroll=bankroll, telegram=telegram)
-
-    # Dashboard só sobe localmente (não tem sentido no GitHub Actions)
-    if not os.getenv("GITHUB_ACTIONS"):
-        start_in_thread(db=db, bankroll=bankroll, port=5000)
-        logger.info("Dashboard disponivel em http://localhost:5000")
-    else:
-        logger.info("Rodando no GitHub Actions — dashboard desativado")
-
-    telegram.test_connection()
-    monitor.start()
-
-    scheduler = DailyScheduler(
-        odds_client=odds_client,
-        filter_engine_fn=analyze_match,
-        telegram=telegram,
+def cmd_start(chat_id):
+    bot.send(
+        "<b>Momentum Bet Bot V2</b>\n\n"
+        "/jogos — Grade do dia com botões para monitorar\n"
+        "/status — Jogos sendo monitorados agora\n"
+        "/parar — Para o monitoramento de um jogo\n\n"
+        "O Momentum Bet deve estar rodando localmente (INICIAR.bat).",
+        chat_id=chat_id,
     )
-    scheduler.start()
 
-    sport_keys = load_sport_keys()
-    logger.info(f"Monitorando {len(sport_keys)} ligas")
 
-    alertas_enviados: set[str] = set()
+def cmd_jogos(chat_id):
+    if not api.api_online():
+        bot.send(
+            "Momentum Bet offline.\nAbra <b>INICIAR.bat</b> no computador e tente novamente.",
+            chat_id=chat_id,
+        )
+        return
 
-    while True:
+    try:
+        data = api.buscar_grade()
+    except Exception as e:
+        bot.send(f"Erro ao buscar grade: {e}", chat_id=chat_id)
+        return
+
+    jogos = data.get("jogos", [])
+    if not jogos:
+        bot.send("Nenhum jogo disponível na grade.", chat_id=chat_id)
+        return
+
+    texto = "<b>Grade do dia</b>\n\n"
+    botoes = []
+
+    for j in jogos:
+        status_icon = "🔴" if j.get("ao_vivo") else "🕐"
+        mon_icon = "📡" if j.get("monitorando") else ""
+        pressao = j.get("pressao_atual")
+        p_str = f"  <b>{pressao:+}</b>" if pressao is not None else ""
+        texto += f"{status_icon}{mon_icon} {j['nome']}  {j['inicio']}{p_str}\n"
+
+        label = "■ Parar" if j.get("monitorando") else "▶ Monitorar"
+        cb_data = f"par:{j['event_id']}" if j.get("monitorando") else f"mon:{j['event_id']}:{j['market_id']}"
+        botoes.append([{"text": f"{label} — {j['nome']}", "callback_data": cb_data}])
+
+    markup = {"inline_keyboard": botoes}
+    bot.send(texto, chat_id=chat_id, markup=markup)
+
+
+def cmd_status(chat_id):
+    if not api.api_online():
+        bot.send("Momentum Bet offline.", chat_id=chat_id)
+        return
+
+    try:
+        statuses = api.buscar_status()
+    except Exception as e:
+        bot.send(f"Erro ao buscar status: {e}", chat_id=chat_id)
+        return
+
+    if not statuses:
+        bot.send("Nenhum jogo sendo monitorado no momento.", chat_id=chat_id)
+        return
+
+    linhas = ["<b>Jogos monitorados</b>\n"]
+    for eid, st in statuses.items():
+        casa = st.get("time_casa", "?")
+        fora = st.get("time_fora", "?")
+        placar = st.get("placar", "?-?")
+        pressao = st.get("pressao_atual")
+        p_str = f"  pressão {pressao:+}" if pressao is not None else ""
+        ciclos = st.get("ciclos", 0)
+        erro = st.get("erro")
+        erro_str = f"\n  ⚠️ {erro}" if erro else ""
+        linhas.append(f"<b>{casa} vs {fora}</b>  {placar}{p_str}\n  {ciclos} ciclos{erro_str}")
+
+    bot.send("\n\n".join(linhas), chat_id=chat_id)
+
+
+def cmd_parar(chat_id):
+    if not api.api_online():
+        bot.send("Momentum Bet offline.", chat_id=chat_id)
+        return
+
+    try:
+        statuses = api.buscar_status()
+    except Exception as e:
+        bot.send(f"Erro: {e}", chat_id=chat_id)
+        return
+
+    if not statuses:
+        bot.send("Nenhum jogo monitorado para parar.", chat_id=chat_id)
+        return
+
+    botoes = []
+    for eid, st in statuses.items():
+        casa = st.get("time_casa", "?")
+        fora = st.get("time_fora", "?")
+        botoes.append([{"text": f"■ Parar — {casa} vs {fora}", "callback_data": f"par:{eid}"}])
+
+    markup = {"inline_keyboard": botoes}
+    bot.send("Qual jogo parar?", chat_id=chat_id, markup=markup)
+
+
+# ── Callback handler ──────────────────────────────────────────────────────────
+
+def handle_callback(cb):
+    cb_id = cb["id"]
+    chat_id = cb["message"]["chat"]["id"]
+    data = cb.get("data", "")
+
+    if data.startswith("mon:"):
+        partes = data.split(":")
+        event_id, market_id = partes[1], partes[2]
         try:
-            if bankroll.check_stop_diario():
-                logger.warning("Stop diario ativo — aguardando proximo ciclo sem buscar mercados")
-                time.sleep(SCAN_INTERVAL)
-                continue
-
-            # Para se a cota da API estiver zerada
-            if odds_client.requests_remaining is not None and odds_client.requests_remaining <= 0:
-                msg = "AVISO: cota da The Odds API esgotada. Bot pausado ate o proximo mes."
-                logger.warning(msg)
-                telegram.send(msg, tipo_alerta="SISTEMA")
-                break
-
-            logger.info("--- Nova varredura ---")
-            markets = odds_client.get_active_markets(sport_keys)
-
-            for market in markets:
-                market_id = market.get("market_id", "")
-                if market_id in alertas_enviados:
-                    continue
-
-                minutos = minutos_ate_kickoff(market.get("start_time", ""))
-                if not (0 < minutos <= KICKOFF_WINDOW):
-                    continue
-
-                if bankroll.check_max_trades_simultaneos():
-                    logger.info("Limite de trades simultaneos atingido — pulando novos alertas")
-                    break
-
-                # Busca odd anterior para checar veto de queda brusca
-                ultimo = db.get_last_odds(market_id)
-                prev_odd = ultimo.get("odd_favorito") if ultimo else None
-
-                # Salva snapshot de odds antes da analise
-                db.insert_odds_snapshot(market)
-
-                result = analyze_match(market, prev_odd=prev_odd)
-
-                if result["status"] != "APROVADO":
-                    logger.info(f"Reprovado: {market.get('event')} — {result['motivo']}")
-                    continue
-
-                stake = bankroll.calcular_stake()
-
-                from alerts import alert_formatter
-                msg = alert_formatter.entrada(market, result, stake)
-                telegram.send_entrada(msg, market_id=market_id)
-
-                db.insert_trade(
-                    liga=market.get("competition", ""),
-                    jogo=market.get("event", ""),
-                    favorito=market.get("favorito", ""),
-                    odd_entrada=market.get("odd_favorito", 0.0),
-                    stake_reais=stake,
-                    motivo_entrada=result["motivo"],
-                    score_entrada=result["score"],
-                    market_id=market_id,
-                )
-                alertas_enviados.add(market_id)
-                logger.info(f"Alerta enviado: {market.get('event')} | Score {result['score']}")
-
-        except KeyboardInterrupt:
-            logger.info("Interrompido pelo usuario")
-            monitor.stop()
-            break
+            api.iniciar_jogo(event_id, market_id)
+            bot.answer_callback(cb_id, "Monitoramento iniciado!")
+            bot.send(f"📡 Monitoramento iniciado.\nUse /status para acompanhar.", chat_id=chat_id)
         except Exception as e:
-            logger.error(f"Erro no loop principal: {e}", exc_info=True)
+            bot.answer_callback(cb_id, "Erro ao iniciar")
+            bot.send(f"Erro: {e}", chat_id=chat_id)
 
-        time.sleep(SCAN_INTERVAL)
+    elif data.startswith("par:"):
+        event_id = data.split(":")[1]
+        try:
+            api.parar_jogo(event_id)
+            bot.answer_callback(cb_id, "Monitoramento parado.")
+            bot.send("■ Monitoramento parado.", chat_id=chat_id)
+        except Exception as e:
+            bot.answer_callback(cb_id, "Erro ao parar")
+            bot.send(f"Erro: {e}", chat_id=chat_id)
+
+    else:
+        bot.answer_callback(cb_id)
+
+
+# ── Loop de alertas ───────────────────────────────────────────────────────────
+
+def _loop_alertas():
+    while True:
+        time.sleep(60)
+        if not bot.configurado() or not api.api_online():
+            continue
+        try:
+            statuses = api.buscar_status()
+            for eid, st in statuses.items():
+                try:
+                    dados = api.buscar_dados(eid)
+                    msgs = sinais.verificar(eid, st, dados)
+                    for m in msgs:
+                        bot.send(m)
+                except Exception:
+                    pass
+        except Exception as e:
+            logger.warning(f"Loop alertas erro: {e}")
+
+
+# ── Loop principal (long polling) ─────────────────────────────────────────────
+
+def _processar(update):
+    if "message" in update:
+        msg = update["message"]
+        chat_id = msg["chat"]["id"]
+        texto = msg.get("text", "").strip()
+        if texto.startswith("/start"):
+            cmd_start(chat_id)
+        elif texto.startswith("/jogos"):
+            cmd_jogos(chat_id)
+        elif texto.startswith("/status"):
+            cmd_status(chat_id)
+        elif texto.startswith("/parar"):
+            cmd_parar(chat_id)
+
+    elif "callback_query" in update:
+        handle_callback(update["callback_query"])
+
+
+def main():
+    if not bot.configurado():
+        logger.error("TELEGRAM_BOT_TOKEN ou TELEGRAM_CHAT_ID não configurado no .env")
+        sys.exit(1)
+
+    logger.info("=== Momentum Bet Bot V2 iniciando ===")
+    bot.send("<b>Bot online!</b>\nUse /jogos para ver a grade do dia.")
+
+    threading.Thread(target=_loop_alertas, daemon=True).start()
+
+    offset = None
+    while True:
+        updates = bot.get_updates(offset=offset)
+        for u in updates:
+            offset = u["update_id"] + 1
+            try:
+                _processar(u)
+            except Exception as e:
+                logger.error(f"Erro ao processar update {u.get('update_id')}: {e}", exc_info=True)
 
 
 if __name__ == "__main__":
